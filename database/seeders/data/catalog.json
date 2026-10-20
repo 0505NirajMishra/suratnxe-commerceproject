@@ -1,0 +1,976 @@
+{
+  "categories": [
+    {
+      "slug": "cosmopolitan",
+      "name": "Cosmopolitan",
+      "code": "CSM",
+      "description": "Bold jacquards and contemporary woven designs.",
+      "sort_order": 0,
+      "art": {
+        "p": "geo",
+        "c": [
+          "#7a2530",
+          "#4d141c",
+          "#e0b87a"
+        ],
+        "s": 2
+      }
+    },
+    {
+      "slug": "italian",
+      "name": "Italian",
+      "code": "ITA",
+      "description": "Imported-style Italian brocades with gold detailing.",
+      "sort_order": 1,
+      "art": {
+        "p": "floral",
+        "c": [
+          "#efe0c8",
+          "#d3b78e",
+          "#8a6b3a"
+        ],
+        "s": 3
+      }
+    },
+    {
+      "slug": "muslin",
+      "name": "Muslin",
+      "code": "MUS",
+      "description": "Soft, breathable muslin in delicate prints.",
+      "sort_order": 2,
+      "art": {
+        "p": "paisley",
+        "c": [
+          "#f6efe3",
+          "#e2d4bc",
+          "#b79a6b"
+        ],
+        "s": 4
+      }
+    },
+    {
+      "slug": "satin",
+      "name": "Satin",
+      "code": "SAT",
+      "description": "Lustrous satins with a liquid drape.",
+      "sort_order": 3,
+      "art": {
+        "p": "plain",
+        "c": [
+          "#2a2623",
+          "#0f0d0c",
+          "#b8946a"
+        ],
+        "s": 5
+      }
+    },
+    {
+      "slug": "dupatta",
+      "name": "Dupatta",
+      "code": "DUP",
+      "description": "Festive dupatta fabrics with rich borders.",
+      "sort_order": 4,
+      "art": {
+        "p": "floral",
+        "c": [
+          "#7a2530",
+          "#4d141c",
+          "#e0b87a"
+        ],
+        "s": 6
+      }
+    },
+    {
+      "slug": "fendi",
+      "name": "Fendi",
+      "code": "FEN",
+      "description": "Designer monogram-inspired luxury weaves.",
+      "sort_order": 5,
+      "art": {
+        "p": "geo",
+        "c": [
+          "#2a2623",
+          "#0f0d0c",
+          "#b8946a"
+        ],
+        "s": 7
+      }
+    },
+    {
+      "slug": "georgette",
+      "name": "Georgette",
+      "code": "GEO",
+      "description": "Light flowing georgette for everyday elegance.",
+      "sort_order": 6,
+      "art": {
+        "p": "floral",
+        "c": [
+          "#f0d3cf",
+          "#d9a9a3",
+          "#8a4a46"
+        ],
+        "s": 8
+      }
+    },
+    {
+      "slug": "silk",
+      "name": "Silk",
+      "code": "SLK",
+      "description": "Pure and blended silks from traditional looms.",
+      "sort_order": 7,
+      "art": {
+        "p": "brocade",
+        "c": [
+          "#d9a93c",
+          "#a97c1c",
+          "#fff1c9"
+        ],
+        "s": 9
+      }
+    },
+    {
+      "slug": "cotton",
+      "name": "Cotton",
+      "code": "CTN",
+      "description": "Comfort cottons with block and hand prints.",
+      "sort_order": 8,
+      "art": {
+        "p": "stripe",
+        "c": [
+          "#d8dfcf",
+          "#a9b79c",
+          "#4d5f43"
+        ],
+        "s": 10
+      }
+    },
+    {
+      "slug": "velvet",
+      "name": "Velvet",
+      "code": "VLV",
+      "description": "Deep, plush velvets for winter and weddings.",
+      "sort_order": 9,
+      "art": {
+        "p": "plain",
+        "c": [
+          "#5b2a49",
+          "#34172b",
+          "#e2b8c8"
+        ],
+        "s": 11
+      }
+    },
+    {
+      "slug": "chiffon",
+      "name": "Chiffon",
+      "code": "CHF",
+      "description": "Sheer, airy chiffon for dupattas and gowns.",
+      "sort_order": 10,
+      "art": {
+        "p": "dots",
+        "c": [
+          "#f6dcc8",
+          "#e3b595",
+          "#a0603a"
+        ],
+        "s": 12
+      }
+    }
+  ],
+  "products": [
+    {
+      "name": "Italian Classic",
+      "category": "italian",
+      "sku": "SN-ITA-101",
+      "price": 850,
+      "mrp": 999,
+      "stock": 130,
+      "width": "58 inch",
+      "fabric": "Viscose Blend",
+      "usage": "Dresses, Tops, Gowns",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Italian Classic is a premium viscose blend selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "new"
+      ],
+      "art": {
+        "p": "floral",
+        "c": [
+          "#efe0c8",
+          "#d3b78e",
+          "#8a6b3a"
+        ],
+        "s": 11
+      },
+      "rating": 4.2,
+      "reviews_count": 59
+    },
+    {
+      "name": "Italian Luxe",
+      "category": "italian",
+      "sku": "SN-ITA-103",
+      "price": 790,
+      "mrp": 890,
+      "stock": 120,
+      "width": "44 inch",
+      "fabric": "Viscose Jacquard",
+      "usage": "Kurtis, Suits, Lehengas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Italian Luxe is a premium viscose jacquard selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "trending"
+      ],
+      "art": {
+        "p": "brocade",
+        "c": [
+          "#f6efe3",
+          "#e2d4bc",
+          "#b79a6b"
+        ],
+        "s": 12
+      },
+      "rating": 4.4,
+      "reviews_count": 10
+    },
+    {
+      "name": "Italian Bloom",
+      "category": "italian",
+      "sku": "SN-ITA-105",
+      "price": 890,
+      "mrp": 1050,
+      "stock": 201,
+      "width": "44 inch",
+      "fabric": "Polyester Blend",
+      "usage": "Sarees, Dupattas, Blouses",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Italian Bloom is a premium polyester blend selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "best"
+      ],
+      "art": {
+        "p": "floral",
+        "c": [
+          "#f6dcc8",
+          "#e3b595",
+          "#a0603a"
+        ],
+        "s": 13
+      },
+      "rating": 4.2,
+      "reviews_count": 86
+    },
+    {
+      "name": "Fendi Signature",
+      "category": "fendi",
+      "sku": "SN-FEN-101",
+      "price": 980,
+      "mrp": 1150,
+      "stock": 398,
+      "width": "44 inch",
+      "fabric": "Poly Crepe",
+      "usage": "Shirts, Dresses, Kurtas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Fendi Signature is a premium poly crepe selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "best"
+      ],
+      "art": {
+        "p": "geo",
+        "c": [
+          "#f6dcc8",
+          "#e3b595",
+          "#a0603a"
+        ],
+        "s": 14
+      },
+      "rating": 4.8,
+      "reviews_count": 52
+    },
+    {
+      "name": "Fendi Royal",
+      "category": "fendi",
+      "sku": "SN-FEN-103",
+      "price": 920,
+      "mrp": 1100,
+      "stock": 271,
+      "width": "58 inch",
+      "fabric": "Viscose Blend",
+      "usage": "Cushions, Drapes, Home Decor",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Fendi Royal is a premium viscose blend selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "trending"
+      ],
+      "art": {
+        "p": "geo",
+        "c": [
+          "#5b2a49",
+          "#34172b",
+          "#e2b8c8"
+        ],
+        "s": 15
+      },
+      "rating": 4.8,
+      "reviews_count": 61
+    },
+    {
+      "name": "Fendi Monogram",
+      "category": "fendi",
+      "sku": "SN-FEN-105",
+      "price": 1050,
+      "mrp": 1200,
+      "stock": 72,
+      "width": "44 inch",
+      "fabric": "Jacquard Weave",
+      "usage": "Dresses, Tops, Gowns",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Fendi Monogram is a premium jacquard weave selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "new"
+      ],
+      "art": {
+        "p": "geo",
+        "c": [
+          "#2a2623",
+          "#0f0d0c",
+          "#b8946a"
+        ],
+        "s": 16
+      },
+      "rating": 4.2,
+      "reviews_count": 93
+    },
+    {
+      "name": "Muslin Premium",
+      "category": "muslin",
+      "sku": "SN-MUS-101",
+      "price": 720,
+      "mrp": 820,
+      "stock": 372,
+      "width": "44 inch",
+      "fabric": "Pure Muslin",
+      "usage": "Kurtis, Suits, Lehengas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Muslin Premium is a premium pure muslin selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "new"
+      ],
+      "art": {
+        "p": "paisley",
+        "c": [
+          "#f6efe3",
+          "#e2d4bc",
+          "#b79a6b"
+        ],
+        "s": 17
+      },
+      "rating": 4.8,
+      "reviews_count": 57
+    },
+    {
+      "name": "Muslin Soft",
+      "category": "muslin",
+      "sku": "SN-MUS-103",
+      "price": 680,
+      "mrp": 760,
+      "stock": 104,
+      "width": "44 inch",
+      "fabric": "Cotton Muslin",
+      "usage": "Sarees, Dupattas, Blouses",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Muslin Soft is a premium cotton muslin selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "trending"
+      ],
+      "art": {
+        "p": "paisley",
+        "c": [
+          "#f0d3cf",
+          "#d9a9a3",
+          "#8a4a46"
+        ],
+        "s": 18
+      },
+      "rating": 4.5,
+      "reviews_count": 31
+    },
+    {
+      "name": "Muslin Print",
+      "category": "muslin",
+      "sku": "SN-MUS-105",
+      "price": 640,
+      "mrp": 700,
+      "stock": 379,
+      "width": "58 inch",
+      "fabric": "Cotton Muslin",
+      "usage": "Shirts, Dresses, Kurtas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Muslin Print is a premium cotton muslin selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [],
+      "art": {
+        "p": "dots",
+        "c": [
+          "#b9c9d6",
+          "#8da3b5",
+          "#3b5367"
+        ],
+        "s": 19
+      },
+      "rating": 4.8,
+      "reviews_count": 21
+    },
+    {
+      "name": "Satin Royal",
+      "category": "satin",
+      "sku": "SN-SAT-101",
+      "price": 640,
+      "mrp": 760,
+      "stock": 338,
+      "width": "44 inch",
+      "fabric": "Duchess Satin",
+      "usage": "Cushions, Drapes, Home Decor",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Satin Royal is a premium duchess satin selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "best"
+      ],
+      "art": {
+        "p": "plain",
+        "c": [
+          "#7a2530",
+          "#4d141c",
+          "#e0b87a"
+        ],
+        "s": 20
+      },
+      "rating": 4.5,
+      "reviews_count": 13
+    },
+    {
+      "name": "Satin Elite",
+      "category": "satin",
+      "sku": "SN-SAT-103",
+      "price": 760,
+      "mrp": 880,
+      "stock": 48,
+      "width": "44 inch",
+      "fabric": "Heavy Satin",
+      "usage": "Dresses, Tops, Gowns",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Satin Elite is a premium heavy satin selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "trending"
+      ],
+      "art": {
+        "p": "plain",
+        "c": [
+          "#26324f",
+          "#141b30",
+          "#d9b77a"
+        ],
+        "s": 21
+      },
+      "rating": 4.5,
+      "reviews_count": 82
+    },
+    {
+      "name": "Satin Pearl",
+      "category": "satin",
+      "sku": "SN-SAT-105",
+      "price": 590,
+      "mrp": 650,
+      "stock": 344,
+      "width": "44 inch",
+      "fabric": "Crepe Satin",
+      "usage": "Kurtis, Suits, Lehengas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Satin Pearl is a premium crepe satin selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "new"
+      ],
+      "art": {
+        "p": "plain",
+        "c": [
+          "#f6efe3",
+          "#e2d4bc",
+          "#b79a6b"
+        ],
+        "s": 22
+      },
+      "rating": 4.6,
+      "reviews_count": 42
+    },
+    {
+      "name": "Cosmopolitan Jacquard",
+      "category": "cosmopolitan",
+      "sku": "SN-CSM-101",
+      "price": 780,
+      "mrp": 900,
+      "stock": 250,
+      "width": "58 inch",
+      "fabric": "Jacquard Weave",
+      "usage": "Sarees, Dupattas, Blouses",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Cosmopolitan Jacquard is a premium jacquard weave selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "best"
+      ],
+      "art": {
+        "p": "geo",
+        "c": [
+          "#7a2530",
+          "#4d141c",
+          "#e0b87a"
+        ],
+        "s": 23
+      },
+      "rating": 4.7,
+      "reviews_count": 72
+    },
+    {
+      "name": "Cosmopolitan Royal",
+      "category": "cosmopolitan",
+      "sku": "SN-CSM-103",
+      "price": 920,
+      "mrp": 1050,
+      "stock": 298,
+      "width": "44 inch",
+      "fabric": "Silk Blend",
+      "usage": "Shirts, Dresses, Kurtas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Cosmopolitan Royal is a premium silk blend selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "new"
+      ],
+      "art": {
+        "p": "brocade",
+        "c": [
+          "#26324f",
+          "#141b30",
+          "#d9b77a"
+        ],
+        "s": 24
+      },
+      "rating": 4.9,
+      "reviews_count": 48
+    },
+    {
+      "name": "Cosmopolitan Noir",
+      "category": "cosmopolitan",
+      "sku": "SN-CSM-105",
+      "price": 860,
+      "mrp": 980,
+      "stock": 75,
+      "width": "44 inch",
+      "fabric": "Viscose Jacquard",
+      "usage": "Cushions, Drapes, Home Decor",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Cosmopolitan Noir is a premium viscose jacquard selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "trending"
+      ],
+      "art": {
+        "p": "geo",
+        "c": [
+          "#2a2623",
+          "#0f0d0c",
+          "#b8946a"
+        ],
+        "s": 25
+      },
+      "rating": 4.3,
+      "reviews_count": 48
+    },
+    {
+      "name": "Banarasi Dupatta Fabric",
+      "category": "dupatta",
+      "sku": "SN-DUP-101",
+      "price": 1150,
+      "mrp": 1350,
+      "stock": 85,
+      "width": "44 inch",
+      "fabric": "Banarasi Silk Blend",
+      "usage": "Dresses, Tops, Gowns",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Banarasi Dupatta Fabric is a premium banarasi silk blend selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "best"
+      ],
+      "art": {
+        "p": "brocade",
+        "c": [
+          "#7a2530",
+          "#4d141c",
+          "#e0b87a"
+        ],
+        "s": 26
+      },
+      "rating": 4.7,
+      "reviews_count": 61
+    },
+    {
+      "name": "Phulkari Dupatta Fabric",
+      "category": "dupatta",
+      "sku": "SN-DUP-103",
+      "price": 980,
+      "mrp": 1100,
+      "stock": 329,
+      "width": "58 inch",
+      "fabric": "Chanderi Blend",
+      "usage": "Kurtis, Suits, Lehengas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Phulkari Dupatta Fabric is a premium chanderi blend selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "new"
+      ],
+      "art": {
+        "p": "floral",
+        "c": [
+          "#d9a93c",
+          "#a97c1c",
+          "#fff1c9"
+        ],
+        "s": 27
+      },
+      "rating": 4.4,
+      "reviews_count": 27
+    },
+    {
+      "name": "Georgette Floral",
+      "category": "georgette",
+      "sku": "SN-GEO-103",
+      "price": 560,
+      "mrp": 640,
+      "stock": 137,
+      "width": "44 inch",
+      "fabric": "Pure Georgette",
+      "usage": "Sarees, Dupattas, Blouses",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Georgette Floral is a premium pure georgette selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "trending"
+      ],
+      "art": {
+        "p": "floral",
+        "c": [
+          "#f0d3cf",
+          "#d9a9a3",
+          "#8a4a46"
+        ],
+        "s": 28
+      },
+      "rating": 4.1,
+      "reviews_count": 33
+    },
+    {
+      "name": "Georgette Pastel",
+      "category": "georgette",
+      "sku": "SN-GEO-102",
+      "price": 520,
+      "mrp": 580,
+      "stock": 160,
+      "width": "44 inch",
+      "fabric": "Viscose Georgette",
+      "usage": "Shirts, Dresses, Kurtas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Georgette Pastel is a premium viscose georgette selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [],
+      "art": {
+        "p": "dots",
+        "c": [
+          "#d8dfcf",
+          "#a9b79c",
+          "#4d5f43"
+        ],
+        "s": 29
+      },
+      "rating": 4.8,
+      "reviews_count": 94
+    },
+    {
+      "name": "Kanjivaram Silk",
+      "category": "silk",
+      "sku": "SN-SLK-102",
+      "price": 1850,
+      "mrp": 2200,
+      "stock": 109,
+      "width": "44 inch",
+      "fabric": "Pure Silk",
+      "usage": "Cushions, Drapes, Home Decor",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Kanjivaram Silk is a premium pure silk selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "best"
+      ],
+      "art": {
+        "p": "brocade",
+        "c": [
+          "#d9a93c",
+          "#a97c1c",
+          "#fff1c9"
+        ],
+        "s": 30
+      },
+      "rating": 4.8,
+      "reviews_count": 60
+    },
+    {
+      "name": "Mulberry Silk",
+      "category": "silk",
+      "sku": "SN-SLK-104",
+      "price": 1450,
+      "mrp": 1650,
+      "stock": 161,
+      "width": "58 inch",
+      "fabric": "Mulberry Silk",
+      "usage": "Dresses, Tops, Gowns",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Mulberry Silk is a premium mulberry silk selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "new"
+      ],
+      "art": {
+        "p": "paisley",
+        "c": [
+          "#efe0c8",
+          "#d3b78e",
+          "#8a6b3a"
+        ],
+        "s": 31
+      },
+      "rating": 4.4,
+      "reviews_count": 19
+    },
+    {
+      "name": "Cotton Block Print",
+      "category": "cotton",
+      "sku": "SN-CTN-101",
+      "price": 380,
+      "mrp": 440,
+      "stock": 392,
+      "width": "44 inch",
+      "fabric": "100% Cotton",
+      "usage": "Kurtis, Suits, Lehengas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Cotton Block Print is a premium 100% cotton selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "trending"
+      ],
+      "art": {
+        "p": "stripe",
+        "c": [
+          "#d8dfcf",
+          "#a9b79c",
+          "#4d5f43"
+        ],
+        "s": 32
+      },
+      "rating": 4.2,
+      "reviews_count": 90
+    },
+    {
+      "name": "Cotton Mulmul",
+      "category": "cotton",
+      "sku": "SN-CTN-103",
+      "price": 340,
+      "mrp": 390,
+      "stock": 330,
+      "width": "44 inch",
+      "fabric": "Mulmul Cotton",
+      "usage": "Sarees, Dupattas, Blouses",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Cotton Mulmul is a premium mulmul cotton selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [],
+      "art": {
+        "p": "dots",
+        "c": [
+          "#b9c9d6",
+          "#8da3b5",
+          "#3b5367"
+        ],
+        "s": 33
+      },
+      "rating": 4.4,
+      "reviews_count": 71
+    },
+    {
+      "name": "Velvet Regal",
+      "category": "velvet",
+      "sku": "SN-VLV-103",
+      "price": 1250,
+      "mrp": 1450,
+      "stock": 150,
+      "width": "44 inch",
+      "fabric": "Micro Velvet",
+      "usage": "Shirts, Dresses, Kurtas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Velvet Regal is a premium micro velvet selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "best"
+      ],
+      "art": {
+        "p": "plain",
+        "c": [
+          "#26324f",
+          "#141b30",
+          "#d9b77a"
+        ],
+        "s": 34
+      },
+      "rating": 4.2,
+      "reviews_count": 53
+    },
+    {
+      "name": "Velvet Wine",
+      "category": "velvet",
+      "sku": "SN-VLV-102",
+      "price": 1100,
+      "mrp": 1250,
+      "stock": 82,
+      "width": "58 inch",
+      "fabric": "Panne Velvet",
+      "usage": "Cushions, Drapes, Home Decor",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Velvet Wine is a premium panne velvet selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "trending"
+      ],
+      "art": {
+        "p": "plain",
+        "c": [
+          "#5b2a49",
+          "#34172b",
+          "#e2b8c8"
+        ],
+        "s": 35
+      },
+      "rating": 4.3,
+      "reviews_count": 62
+    },
+    {
+      "name": "Chiffon Mist",
+      "category": "chiffon",
+      "sku": "SN-CHF-102",
+      "price": 480,
+      "mrp": 540,
+      "stock": 291,
+      "width": "44 inch",
+      "fabric": "Pure Chiffon",
+      "usage": "Dresses, Tops, Gowns",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Chiffon Mist is a premium pure chiffon selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [
+        "new"
+      ],
+      "art": {
+        "p": "dots",
+        "c": [
+          "#b9c9d6",
+          "#8da3b5",
+          "#3b5367"
+        ],
+        "s": 36
+      },
+      "rating": 4.5,
+      "reviews_count": 26
+    },
+    {
+      "name": "Chiffon Blossom",
+      "category": "chiffon",
+      "sku": "SN-CHF-104",
+      "price": 520,
+      "mrp": 600,
+      "stock": 121,
+      "width": "44 inch",
+      "fabric": "Printed Chiffon",
+      "usage": "Kurtis, Suits, Lehengas",
+      "care": "Dry clean recommended. Do not bleach.",
+      "colors": "As shown",
+      "description": "Chiffon Blossom is a premium printed chiffon selected for polished silhouettes and elevated styling. Perfect for designer wear and premium fashion creations. Each metre is quality-checked before dispatch so you get consistent colour and finish across your order.",
+      "tags": [],
+      "art": {
+        "p": "floral",
+        "c": [
+          "#f0d3cf",
+          "#d9a9a3",
+          "#8a4a46"
+        ],
+        "s": 37
+      },
+      "rating": 4.7,
+      "reviews_count": 87
+    }
+  ],
+  "coupons": [
+    {
+      "code": "SURAT10",
+      "type": "percent",
+      "value": 10,
+      "max_discount": 500,
+      "min_order": 1000,
+      "description": "10% off up to ₹500 on orders above ₹1,000"
+    },
+    {
+      "code": "WELCOME200",
+      "type": "flat",
+      "value": 200,
+      "max_discount": 0,
+      "min_order": 1500,
+      "description": "Flat ₹200 off on orders above ₹1,500"
+    },
+    {
+      "code": "FESTIVE15",
+      "type": "percent",
+      "value": 15,
+      "max_discount": 1500,
+      "min_order": 4000,
+      "description": "15% off up to ₹1,500 on orders above ₹4,000"
+    }
+  ],
+  "settings": {
+    "name": "Surat NX",
+    "tagline": "The Textile House",
+    "email": "suratnxllp@gmail.com",
+    "phone": "+91 70412 62555",
+    "address": "106 AIIJEE Empire, next to Bharat Cancer Hospital, Saroli, Surat, Gujarat 395010",
+    "whatsapp": "+917041262555",
+    "map_url": "https://www.google.com/maps/search/?api=1&query=106+AIIJEE+Empire%2C+Saroli%2C+Surat%2C+Gujarat+395010",
+    "business_hours": "Monday: 11:00 AM – 12:00 AM\nTuesday–Saturday: 12:00 AM–8:00 AM, 11:00 AM–12:00 AM\nSunday: 12:00 AM–8:00 AM\nHours might differ on holidays.",
+    "youtube_video": "https://www.youtube.com/shorts/76itAN63bVI",
+    "social_facebook": "https://www.facebook.com/profile.php?id=61565919966697",
+    "social_instagram": "https://www.instagram.com/suratnx/",
+    "social_x": "https://x.com/SuratNx",
+    "social_linkedin": "https://www.linkedin.com/in/suratnx/",
+    "social_youtube": "https://www.youtube.com/channel/UCvzSU9hkPTNybTQ0VyGxh1Q",
+    "free_ship": 2000,
+    "ship_fee": 99,
+    "express_fee": 199,
+    "gst": 5
+  }
+}
