@@ -87,7 +87,7 @@
 <section class="sec">
     <div class="wrap">
         <div class="sec-h"><div><h2>What our customers say</h2><p>Boutiques, designers and home tailors who order from us.</p></div></div>
-        <div class="testi">
+        <div class="testi" data-testimonial-carousel>
             @forelse($testimonials as $review)
                 <figure class="tcard">
                     <span class="stars" aria-label="{{ $review->rating }} out of 5">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>

@@ -198,7 +198,7 @@
                                         {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
                                     @endif
                                 </span>
-                                <div><input id="profile-photo" type="file" name="profile_photo" accept="image/jpeg,image/png,image/webp" data-profile-photo-upload><small>JPG, PNG or WebP. Maximum 5 MB.</small>@error('profile_photo')<small class="field-error">{{ $message }}</small>@enderror</div>
+                                <div><input id="profile-photo" type="file" name="profile_photo" accept="image/jpeg,image/png,image/webp" data-profile-photo-upload><small>JPG, PNG or WebP.</small>@error('profile_photo')<small class="field-error">{{ $message }}</small>@enderror</div>
                             </div>
                         </div>
                         <div class="row2">
@@ -216,14 +216,155 @@
 
                 <section id="password" class="account-section">
                     <h2>Change Password</h2>
-                    <form method="post" action="{{ route('account.password') }}" class="account-form password-form">
-                        @csrf @method('PUT')
-                        <div class="field"><label for="current-password">Current password</label><input id="current-password" type="password" name="current_password" autocomplete="current-password" required></div>
-                        <div class="field"><label for="new-password">New password</label><input id="new-password" type="password" name="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required></div>
-                        <div class="field"><label for="confirm-password">Confirm new password</label><input id="confirm-password" type="password" name="password_confirmation" autocomplete="new-password" required></div>
-                        <button class="btn btn-dark" type="submit">Update password</button>
+
+                    <form method="post"
+                        action="{{ route('account.password') }}"
+                        class="account-form password-form"
+                        id="accountChangePasswordForm">
+
+                        @csrf
+                        @method('PUT')
+
+                        <!-- Current Password -->
+                        <div class="field">
+                            <label for="accountCurrentPassword">Current password</label>
+
+                            <div class="account-password-wrapper">
+                                <input id="accountCurrentPassword"
+                                    type="password"
+                                    name="current_password"
+                                    autocomplete="current-password"
+                                    required>
+
+                                <button type="button"
+                                        class="account-password-eye"
+                                        aria-label="Show current password"
+                                        aria-pressed="false">
+
+                                    <svg class="account-eye-visible"
+                                        viewBox="0 0 24 24"
+                                        width="20" height="20"
+                                        fill="none" stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+
+                                    <svg class="account-eye-hidden"
+                                        viewBox="0 0 24 24"
+                                        width="20" height="20"
+                                        fill="none" stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        style="display:none">
+                                        <path d="M3 3l18 18"/>
+                                        <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                                        <path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.1 3.9"/>
+                                        <path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 1.9-.2 2.8-.5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- New Password -->
+                        <div class="field">
+                            <label for="accountNewPassword">New password</label>
+
+                            <div class="account-password-wrapper">
+                                <input id="accountNewPassword"
+                                    type="password"
+                                    name="password"
+                                    autocomplete="new-password"
+                                    minlength="8"
+                                    placeholder="At least 8 characters"
+                                    required>
+
+                                <button type="button"
+                                        class="account-password-eye"
+                                        aria-label="Show new password"
+                                        aria-pressed="false">
+
+                                    <svg class="account-eye-visible"
+                                        viewBox="0 0 24 24"
+                                        width="20" height="20"
+                                        fill="none" stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+
+                                    <svg class="account-eye-hidden"
+                                        viewBox="0 0 24 24"
+                                        width="20" height="20"
+                                        fill="none" stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        style="display:none">
+                                        <path d="M3 3l18 18"/>
+                                        <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                                        <path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.1 3.9"/>
+                                        <path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 1.9-.2 2.8-.5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="field">
+                            <label for="accountConfirmPassword">Confirm new password</label>
+
+                            <div class="account-password-wrapper">
+                                <input id="accountConfirmPassword"
+                                    type="password"
+                                    name="password_confirmation"
+                                    autocomplete="new-password"
+                                    required>
+
+                                <button type="button"
+                                        class="account-password-eye"
+                                        aria-label="Show confirm password"
+                                        aria-pressed="false">
+
+                                    <svg class="account-eye-visible"
+                                        viewBox="0 0 24 24"
+                                        width="20" height="20"
+                                        fill="none" stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+
+                                    <svg class="account-eye-hidden"
+                                        viewBox="0 0 24 24"
+                                        width="20" height="20"
+                                        fill="none" stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        style="display:none">
+                                        <path d="M3 3l18 18"/>
+                                        <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                                        <path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.1 3.9"/>
+                                        <path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 1.9-.2 2.8-.5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-dark" type="submit">
+                            Update password
+                        </button>
                     </form>
                 </section>
+
             </div>
         </div>
         @foreach($user->orders as $order)

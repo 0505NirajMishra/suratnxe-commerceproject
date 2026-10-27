@@ -36,6 +36,90 @@
         if (toggle) toggle.setAttribute('aria-expanded', String(expanded));
     };
 
+    const testimonialCarousel = document.querySelector('[data-testimonial-carousel]');
+    const setupTestimonialCarousel = () => {
+        if (!testimonialCarousel) return;
+
+        testimonialCarousel.querySelectorAll('[data-carousel-clone]').forEach((clone) => clone.remove());
+        testimonialCarousel.classList.remove('is-auto-carousel');
+        testimonialCarousel.style.removeProperty('max-width');
+        testimonialCarousel.style.removeProperty('--testimonial-card-width');
+
+        const cards = [...testimonialCarousel.querySelectorAll('.tcard')];
+        cards.forEach((card) => card.style.removeProperty('flex'));
+        if (cards.length < 2) return;
+
+        const styles = getComputedStyle(testimonialCarousel);
+        const columns = Math.max(1, styles.gridTemplateColumns.split(' ').length);
+        const gap = parseFloat(styles.columnGap) || 0;
+        const cardWidth = cards[0].getBoundingClientRect().width;
+        const visibleCards = Math.min(columns, cards.length);
+        const viewportWidth = visibleCards * cardWidth + (visibleCards - 1) * gap;
+
+        testimonialCarousel.classList.add('is-auto-carousel');
+        testimonialCarousel.style.setProperty('--testimonial-card-width', `${cardWidth}px`);
+        if (cards.length < columns) {
+            testimonialCarousel.style.maxWidth = `${viewportWidth}px`;
+        }
+
+        let cloneIndex = 0;
+        while (
+            testimonialCarousel.scrollWidth <= testimonialCarousel.clientWidth + 1
+            && cloneIndex < cards.length * 2
+        ) {
+            const clone = cards[cloneIndex % cards.length].cloneNode(true);
+            clone.dataset.carouselClone = 'true';
+            clone.setAttribute('aria-hidden', 'true');
+            testimonialCarousel.append(clone);
+            cloneIndex++;
+        }
+    };
+
+    setupTestimonialCarousel();
+    let testimonialResizeTimer;
+    window.addEventListener('resize', () => {
+        window.clearTimeout(testimonialResizeTimer);
+        testimonialResizeTimer = window.setTimeout(setupTestimonialCarousel, 150);
+    });
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('[data-category-rail], [data-testimonial-carousel]').forEach((carousel) => {
+            const firstCard = carousel.firstElementChild;
+            if (!firstCard) return;
+            const interactionArea = carousel.closest('.rail-wrap') || carousel;
+
+            let interactionUntil = 0;
+            const pauseAfterInteraction = () => {
+                interactionUntil = Date.now() + 10000;
+            };
+            interactionArea.addEventListener('pointerdown', pauseAfterInteraction);
+            interactionArea.addEventListener('wheel', pauseAfterInteraction, { passive: true });
+            interactionArea.addEventListener('keydown', pauseAfterInteraction);
+
+            window.setInterval(() => {
+                if (
+                    document.hidden
+                    || interactionArea.matches(':hover')
+                    || interactionArea.contains(document.activeElement)
+                    || Date.now() < interactionUntil
+                ) {
+                    return;
+                }
+
+                const gap = parseFloat(getComputedStyle(carousel).columnGap) || 0;
+                const distance = firstCard.getBoundingClientRect().width + gap;
+                const end = carousel.scrollWidth - carousel.clientWidth;
+                if (end <= 1) return;
+
+                if (carousel.scrollLeft >= end - 2) {
+                    carousel.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    carousel.scrollBy({ left: distance, behavior: 'smooth' });
+                }
+            }, 4000);
+        });
+    }
+
     const closeDrawer = () => setOpen('nav-open', false, drawerToggle);
     const closeAdminMenu = () => setOpen('side-open', false, adminToggle);
     const closeFilters = () => {
@@ -46,6 +130,13 @@
     document.addEventListener('click', (event) => {
         const target = event.target instanceof Element ? event.target : null;
         if (!target) return;
+
+        const railButton = target.closest('[data-rail-scroll]');
+        if (railButton) {
+            const rail = railButton.closest('.rail-wrap')?.querySelector('[data-category-rail]');
+            const direction = railButton.dataset.railScroll === 'previous' ? -1 : 1;
+            if (rail) rail.scrollBy({ left: direction * rail.clientWidth * 0.8, behavior: 'smooth' });
+        }
 
         if (target.closest('[data-drawer]')) {
             setOpen('nav-open', true, drawerToggle);
@@ -145,13 +236,29 @@
                         const controlName = control.name.replace(/\[\]$/, '');
                         return controlName === fieldName || fieldName.startsWith(`${controlName}.`);
                     });
+
+                // const control = controls[0];
+                // if (!control) return;
+                // control.classList.add('field-invalid');
+                // control.setAttribute('aria-invalid', 'true');
+                // const field = control.closest('.field') || control.parentElement;
+                
                 const control = controls[0];
                 if (!control) return;
+
                 control.classList.add('field-invalid');
                 control.setAttribute('aria-invalid', 'true');
 
+                // Coupon errors are displayed by Laravel Blade.
+                // Prevent JavaScript from displaying the same error again.
+                if (control.name === 'code' && control.closest('form.coupon')) {
+                    return;
+                }
+
                 const field = control.closest('.field') || control.parentElement;
+
                 if (field?.querySelector('[data-validation-error]')) return;
+
                 const describedBy = new Set((control.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
                 messages.forEach((message) => {
                     const error = document.createElement('small');
@@ -166,4 +273,106 @@
             });
         }
     }
+
+    // Password toggle functionality for login and account forms and change password forms.
+
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-password-toggle], #loginPasswordToggle');
+
+        if (!button) return;
+
+        const wrapper = button.closest('.pw');
+        const input = wrapper?.querySelector('input');
+
+        if (!input) return;
+
+        const showPassword = input.type === 'password';
+
+        // Toggle password visibility
+        input.type = showPassword ? 'text' : 'password';
+
+        // Support both login and account password icons
+        const eye = button.querySelector('.icon-eye, #eyeOpen');
+        const eyeOff = button.querySelector('.icon-eye-off, #eyeClosed');
+
+        if (eye) {
+            eye.style.display = showPassword ? 'none' : 'block';
+        }
+
+        if (eyeOff) {
+            eyeOff.style.display = showPassword ? 'block' : 'none';
+        }
+
+        button.setAttribute(
+            'aria-label',
+            showPassword ? 'Hide password' : 'Show password'
+        );
+
+        button.setAttribute('aria-pressed', String(showPassword));
+    });
+
+
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest(
+            '#accountChangePasswordForm .account-password-eye'
+        );
+
+        if (!button) return;
+
+        const wrapper = button.closest('.account-password-wrapper');
+        const input = wrapper?.querySelector('input');
+        const eyeVisible = button.querySelector('.account-eye-visible');
+        const eyeHidden = button.querySelector('.account-eye-hidden');
+
+        if (!input || !eyeVisible || !eyeHidden) return;
+
+        const showPassword = input.type === 'password';
+
+        input.type = showPassword ? 'text' : 'password';
+
+        // Force exactly one icon to be visible.
+        eyeVisible.style.display = showPassword ? 'none' : 'block';
+        eyeHidden.style.display = showPassword ? 'block' : 'none';
+
+        button.setAttribute(
+            'aria-label',
+            showPassword ? 'Hide password' : 'Show password'
+        );
+
+        button.setAttribute('aria-pressed', String(showPassword));
+    });
+
+    // set admin password toggle functionality for admin password settings form
+
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest(
+            '#adminPasswordSettings .admin-pw-toggle'
+        );
+
+        if (!button) return;
+
+        const wrapper = button.closest('.admin-pw-wrapper');
+        const input = wrapper?.querySelector('input');
+
+        const eyeOpen = button.querySelector('.admin-eye-open');
+        const eyeClosed = button.querySelector('.admin-eye-closed');
+
+        if (!input || !eyeOpen || !eyeClosed) return;
+
+        const shouldShow = input.type === 'password';
+
+        input.type = shouldShow ? 'text' : 'password';
+
+        eyeOpen.style.display = shouldShow ? 'none' : 'block';
+        eyeClosed.style.display = shouldShow ? 'block' : 'none';
+
+        button.setAttribute(
+            'aria-label',
+            shouldShow ? 'Hide password' : 'Show password'
+        );
+
+        button.setAttribute('aria-pressed', String(shouldShow));
+    });
+
+
 })();

@@ -20,7 +20,7 @@ return new class extends Migration {
             $t->string('payment_method', 20);                       // UPI | Card | COD | Net Banking
             $t->string('payment_status', 10)->default('Pending');   // Pending | Paid | COD | Failed | Refunded
             $t->string('txn_id')->nullable();
-            $t->string('gateway_order_id')->nullable();             // Razorpay/PhonePe order id
+            $t->string('gateway_order_id')->nullable();             // PayU transaction id
             // amounts
             $t->decimal('subtotal', 10, 2);
             $t->decimal('discount', 10, 2)->default(0);

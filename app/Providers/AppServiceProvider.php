@@ -3,13 +3,17 @@ namespace App\Providers;
 use App\Models\Enquiry;
 use App\Models\Order;
 use App\Models\ReturnRequest;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 class AppServiceProvider extends ServiceProvider
 {
  public function register(): void {}
  public function boot(): void
  {
+  RateLimiter::for('mail', fn () => Limit::perSecond(1));
+
   View::composer('layouts.admin', function ($view) {
    if (!auth()->check() || !auth()->user()->isAdmin()) {
     $view->with('adminNotifications', []);

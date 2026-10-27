@@ -41,7 +41,7 @@ class AccountController extends Controller
             'gender' => 'nullable|in:Male,Female,Other',
             'dob' => 'nullable|date',
             'email' => 'required|email|max:190|unique:users,email,' . $user->id,
-            'profile_photo' => 'nullable|image|max:5120',
+            'profile_photo' => 'nullable|image',
         ]);
         $photo = $data['profile_photo'] ?? null;
         $previousPhoto = null;
@@ -89,7 +89,15 @@ class AccountController extends Controller
         if ($makeDefault) {
             $user->addresses()->update(['is_default' => false]);
         }
-        $user->addresses()->create($data + ['type' => $request->input('type', 'Home'), 'is_default' => $makeDefault]);
+        $addressData = $data + ['type' => $request->input('type', 'Home')];
+        $existingAddress = $user->addresses()->where($addressData)->first();
+        if ($existingAddress) {
+            if ($makeDefault) {
+                $existingAddress->update(['is_default' => true]);
+            }
+        } else {
+            $user->addresses()->create($addressData + ['is_default' => $makeDefault]);
+        }
 
         return back()->with('success', 'Address saved.');
     }

@@ -23,7 +23,7 @@ Laravel 11/12 + MySQL storefront and admin panel for a fabric e-commerce store.
 	CREATE DATABASE suratnx CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 	```
 
-3. This workspace has a local `.env` already. If it is missing (for example, after extracting a clean copy), create it and edit the database credentials:
+3. This workspace has a local `.env` already. If it is missing (for example, after extracting a clean copy), create it and edit the database credentials and set a unique `ADMIN_PASSWORD` of at least 16 characters:
 
 	```powershell
 	Copy-Item .env.example .env
@@ -63,8 +63,9 @@ Laravel 11/12 + MySQL storefront and admin panel for a fabric e-commerce store.
 - Customer profile pictures are validated as images up to 5 MB and stored on Laravel's public disk; run `php artisan storage:link` so uploaded pictures can be displayed.
 - Storefront and admin forms use Laravel validation feedback. Administrators sign in separately at `/admin/login`; storefront customer account pages are not available to admin sessions.
 - Password recovery emails a six-digit OTP. Codes expire after 10 minutes and allow up to five verification attempts.
-- Checkout uses Cash on Delivery until `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET` are configured. Razorpay test mode should be verified before using live credentials. Register `https://your-domain/webhooks/razorpay` with the `payment.captured` event.
-- Stripe and PayPal values in `.env.example` are placeholders; those gateways are not integrated. Gateway refunds are not automated.
+- Checkout uses Cash on Delivery until `PAYU_KEY` and `PAYU_SALT` are configured. Start with `PAYU_MODE=test`, then configure the PayU test merchant's webhook URL as `https://your-domain/webhooks/payu` for transaction success and failure notifications. PayU return hashes and the server-side transaction status/amount are verified before an order is marked paid. Switch to `PAYU_MODE=live` only after end-to-end test payments; keep the salt private.
+- PayU orders and stock reservations are created in a database transaction before the customer is redirected. A signed callback and webhook can safely process duplicate notifications; unpaid/failed reservations are released after 30 minutes by the Laravel scheduler. Gateway refunds are not automated.
+- PayPal values in `.env.example` are placeholders; PayPal is not integrated.
 
 ## Common Setup Errors
 

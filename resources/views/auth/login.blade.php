@@ -26,16 +26,55 @@
                     <input id="login-email" type="email" name="email" autocomplete="email" placeholder="you@example.com" value="{{ old('email') }}" required autofocus @if($errors->has('email')) class="field-invalid" aria-invalid="true" aria-describedby="login-email-error" @endif>
                     @error('email')<small class="field-error-message" id="login-email-error" role="alert" data-validation-error>{{ $message }}</small>@enderror
                 </div>
+                
                 <div class="field">
                     <label for="login-password">Password</label>
+
                     <div class="pw">
-                        <input id="login-password" type="password" name="password" placeholder="Your password" autocomplete="current-password" required @if($errors->has('password')) class="field-invalid" aria-invalid="true" aria-describedby="login-password-error" @endif>
-                        @error('password')<small class="field-error-message" id="login-password-error" role="alert" data-validation-error>{{ $message }}</small>@enderror
-                        <button type="button" data-password-toggle aria-label="Show password" aria-pressed="false">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <input
+                            id="login-password"
+                            type="password"
+                            name="password"
+                            placeholder="Your password"
+                            autocomplete="current-password"
+                            required
+                            @if($errors->has('password'))
+                                class="field-invalid"
+                                aria-invalid="true"
+                                aria-describedby="login-password-error"
+                            @endif
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="loginPasswordToggle"
+                            aria-label="Show password"
+                            aria-pressed="false"
+                        >
+                            <svg id="eyeOpen" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+
+                            <svg id="eyeClosed" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                style="display:none">
+                                <path d="M3 3l18 18"/>
+                                <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                                <path d="M9.9 5.2A11 11 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.1 3.9"/>
+                                <path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1 0 1.9-.2 2.8-.5"/>
+                            </svg>
                         </button>
                     </div>
+
                 </div>
+
                 <div class="auth-login-options">
                     <label class="check"><input type="checkbox" name="remember" value="1" checked> Keep me signed in</label>
                     <a class="link" href="{{ route('password.request') }}">Forgot password?</a>

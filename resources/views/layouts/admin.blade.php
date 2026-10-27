@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex">
+    <link rel="icon" type="image/png" href="{{ asset('images/Surat_nx_logo_texts.png') }}">
     <title>@yield('title', 'Surat NX Admin')</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ filemtime(public_path('css/style.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
@@ -89,6 +90,7 @@
     </form>
     <script>window.laravelValidationErrors = @json($errors->messages());</script>
     <script src="{{ asset('js/app.js') }}?v={{ filemtime(public_path('js/app.js')) }}" defer></script>
+    
     <script>
     (() => {
         const idleLimit = 15 * 60 * 1000;

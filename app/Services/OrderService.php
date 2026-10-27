@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\StoreMailer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 /** Port of the theme's O (orders) object, but transactional and server-trusted. */
@@ -83,7 +84,21 @@ class OrderService
         $updated = DB::transaction(function () use ($order, $txn) {
             $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
             if ($locked->payment_status === 'Paid') {
+                if ($locked->txn_id !== $txn) {
+                    Log::critical('A second PayU transaction was verified for an already-paid order.', [
+                        'order' => $locked->order_no,
+                        'existing_transaction' => $locked->txn_id,
+                        'new_transaction' => $txn,
+                    ]);
+                }
                 return false;
+            }
+
+            if ($locked->status === 'Cancelled') {
+                Log::critical('PayU confirmed payment for an order that was already cancelled and restocked.', [
+                    'order' => $locked->order_no,
+                    'transaction' => $txn,
+                ]);
             }
 
             $locked->update(['payment_status' => 'Paid', 'txn_id' => $txn]);
@@ -97,11 +112,21 @@ class OrderService
         app(StoreMailer::class)->paymentConfirmed($order->fresh());
     }
 
-    public function expireUnpaidRazorpayOrders(): int
+    public function markPaymentFailed(Order $order): void
+    {
+        DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
+            if ($locked->payment_status === 'Pending') {
+                $locked->update(['payment_status' => 'Failed']);
+            }
+        });
+    }
+
+    public function expireUnpaidPayUOrders(): int
     {
         $cutoff = now()->subMinutes(30);
-        $orderIds = Order::where('payment_method', 'Razorpay')
-            ->where('payment_status', 'Pending')
+        $orderIds = Order::where('payment_method', 'PayU')
+            ->whereIn('payment_status', ['Pending', 'Failed'])
             ->where('status', 'Pending')
             ->where('created_at', '<=', $cutoff)
             ->pluck('id');
@@ -110,7 +135,13 @@ class OrderService
         foreach ($orderIds as $orderId) {
             $order = DB::transaction(function () use ($orderId, $cutoff) {
                 $order = Order::whereKey($orderId)->lockForUpdate()->first();
-                if (!$order || $order->payment_method !== 'Razorpay' || $order->payment_status !== 'Pending' || $order->status !== 'Pending' || $order->created_at->gt($cutoff)) {
+                if (
+                    !$order
+                    || $order->payment_method !== 'PayU'
+                    || !in_array($order->payment_status, ['Pending', 'Failed'], true)
+                    || $order->status !== 'Pending'
+                    || $order->created_at->gt($cutoff)
+                ) {
                     return null;
                 }
 
@@ -119,6 +150,9 @@ class OrderService
                 }
 
                 $order->status = 'Cancelled';
+                if ($order->payment_status === 'Pending') {
+                    $order->payment_status = 'Failed';
+                }
                 $order->save();
                 $order->timeline()->firstOrCreate(['status' => 'Cancelled']);
 

@@ -10,7 +10,7 @@ class EnsureStorefrontAccess
 {
     public function handle(Request $request, Closure $next)
     {
-        if ($request->is('admin', 'admin/*', 'webhooks/razorpay')) {
+        if ($request->is('admin', 'admin/*', 'payments/payu/return', 'webhooks/payu')) {
             return $next($request);
         }
 

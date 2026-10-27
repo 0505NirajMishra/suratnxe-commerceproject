@@ -79,8 +79,20 @@
                     @elseif($totals['couponAvailable'])
                         <p class="coupon-applied">Eligible product coupons are applied automatically.</p>
                     @endif
-                    @if($errors->has('code'))<p class="coupon-error">{{ $errors->first('code') }}</p>
-                    @elseif($totals['couponErr'])<p class="coupon-error">{{ $totals['couponErr'] }}</p>@endif
+
+                    {{-- Display the coupon error only once --}}
+                    @error('code')
+                        <p class="coupon-error">{{ $message }}</p>
+                    @enderror
+
+                    {{-- @if($errors->has('code'))
+                        <p class="coupon-error">
+                            {{ $errors->first('code') }}
+                        </p>
+                    @elseif($totals['couponErr'])
+                        <p class="coupon-error">{{ $totals['couponErr'] }}</p>    
+                    @endif --}}
+                    
                     <p id="cart-coupon-applied" class="coupon-applied" @if(!$totals['coupon']) hidden @endif><span id="cart-coupon-code">{{ $totals['coupon'] }} applied</span><span>− ₹<span id="cart-discount">{{ number_format($totals['discount'], 2) }}</span></span></p>
                     <div class="sum-r"><span>Subtotal (<span id="cart-meters">{{ $totals['meters'] }}</span> m)</span><span>₹<span id="cart-subtotal">{{ number_format($totals['sub'], 2) }}</span></span></div>
                     <div id="cart-discount-row" class="sum-r" @if($totals['discount'] <= 0) hidden @endif><span>Discount</span><span class="g">− ₹<span id="cart-discount-total">{{ number_format($totals['discount'], 2) }}</span></span></div>
@@ -105,6 +117,8 @@
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
         });
+        let updateTimer = null;
+        let updatePromise = null;
 
         const refreshLineTotal = (input) => {
             const row = input.closest('.cart-item');
@@ -113,9 +127,109 @@
             row.querySelector('[data-line-total]').textContent = `₹${formatMoney(Number(row.dataset.unitPrice) * quantity)}`;
         };
 
+        const updateCart = async () => {
+            if (updatePromise) return updatePromise;
+
+            updatePromise = (async () => {
+                const submit = form.querySelector('button[type="submit"]');
+                const quantityControls = form.querySelectorAll('.cart-item input, .cart-item [data-qty-step]');
+                const formData = new FormData(form);
+                submit.disabled = true;
+                quantityControls.forEach((control) => {
+                    control.disabled = true;
+                });
+                updateStatus.hidden = false;
+                updateStatus.textContent = 'Updating cart totals…';
+                updateStatus.classList.remove('error');
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: formData,
+                    });
+                    const result = await response.json();
+                    if (!response.ok) {
+                        throw new Error(Object.values(result.errors || {}).flat().join(' ') || result.message || 'Unable to update your cart.');
+                    }
+
+                    if (result.items.length === 0) {
+                        window.location.reload();
+                        return true;
+                    }
+
+                    const updatedIds = new Set(result.items.map((item) => String(item.id)));
+                    form.querySelectorAll('.cart-item').forEach((row) => {
+                        if (updatedIds.has(row.dataset.productId)) return;
+                        document.getElementById(`remove-cart-item-${row.dataset.productId}`)?.remove();
+                        row.remove();
+                    });
+
+                    result.items.forEach((item) => {
+                        const row = form.querySelector(`.cart-item[data-product-id="${item.id}"]`);
+                        if (!row) return;
+                        const input = row.querySelector('input[type="number"]');
+                        input.value = item.qty;
+                        row.querySelector('[data-line-total]').textContent = `₹${formatMoney(item.lineTotal)}`;
+                    });
+
+                    document.getElementById('cart-meters').textContent = result.meters;
+                    document.getElementById('cart-subtotal').textContent = formatMoney(result.subtotal);
+                    document.getElementById('cart-discount').textContent = formatMoney(result.discount);
+                    document.getElementById('cart-discount-total').textContent = formatMoney(result.discount);
+                    document.getElementById('cart-discount-row').hidden = result.discount <= 0;
+                    document.getElementById('cart-shipping').textContent = result.shipping > 0 ? `₹${formatMoney(result.shipping)}` : 'FREE';
+                    document.getElementById('cart-tax').textContent = formatMoney(result.tax);
+                    document.getElementById('cart-total').textContent = formatMoney(result.total);
+
+                    const couponNotice = document.getElementById('cart-coupon-applied');
+                    couponNotice.hidden = !result.coupon;
+                    document.getElementById('cart-coupon-code').textContent = result.coupon ? `${result.coupon} applied` : '';
+
+                    const freeShipping = document.getElementById('cart-free-shipping');
+                    const remaining = Math.max(0, result.freeShippingLimit - (result.subtotal - result.discount));
+                    freeShipping.querySelector('span').innerHTML = remaining > 0
+                        ? `Add <b id="cart-free-shipping-amount">₹${formatMoney(remaining)}</b> more to unlock free shipping.`
+                        : 'You have unlocked <b>free shipping</b>.';
+                    freeShipping.querySelector('i > b').style.width = `${result.freeShippingLimit > 0 ? Math.min(100, ((result.subtotal - result.discount) / result.freeShippingLimit) * 100) : 100}%`;
+
+                    document.querySelector('.cart-page .page-head p').textContent = `${result.items.length} fabric${result.items.length === 1 ? '' : 's'} · ${result.meters} metres`;
+                    updateStatus.textContent = 'Cart quantities and prices updated.';
+                    return true;
+                } catch (error) {
+                    updateStatus.classList.add('error');
+                    updateStatus.textContent = error.message;
+                    return false;
+                } finally {
+                    submit.disabled = false;
+                    quantityControls.forEach((control) => {
+                        control.disabled = false;
+                    });
+                }
+            })();
+
+            const success = await updatePromise;
+            updatePromise = null;
+            return success;
+        };
+
+        const scheduleCartUpdate = (delay = 350) => {
+            clearTimeout(updateTimer);
+            updateTimer = setTimeout(updateCart, delay);
+        };
+
         form.querySelectorAll('.cart-item input[type="number"]').forEach((input) => {
-            input.addEventListener('input', () => refreshLineTotal(input));
-            input.addEventListener('change', () => refreshLineTotal(input));
+            input.addEventListener('input', () => {
+                refreshLineTotal(input);
+                scheduleCartUpdate();
+            });
+            input.addEventListener('change', () => {
+                refreshLineTotal(input);
+                scheduleCartUpdate(0);
+            });
         });
 
         form.querySelectorAll('.cart-item [data-qty-step]').forEach((button) => {
@@ -123,78 +237,22 @@
                 const input = button.parentElement.querySelector('input');
                 input.value = Math.max(Number(input.min), Math.min(Number(input.max), Number(input.value) + Number(button.dataset.qtyStep)));
                 refreshLineTotal(input);
+                scheduleCartUpdate(0);
             });
         });
 
-        form.addEventListener('submit', async (event) => {
+        form.addEventListener('submit', (event) => {
             event.preventDefault();
-            const submit = form.querySelector('button[type="submit"]');
-            submit.disabled = true;
-            updateStatus.hidden = false;
-            updateStatus.textContent = 'Updating cart totals…';
-            updateStatus.classList.remove('error');
+            clearTimeout(updateTimer);
+            updateCart();
+        });
 
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: new FormData(form),
-                });
-                const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(Object.values(result.errors || {}).flat().join(' ') || result.message || 'Unable to update your cart.');
-                }
-
-                if (result.items.length === 0) {
-                    window.location.reload();
-                    return;
-                }
-
-                const updatedIds = new Set(result.items.map((item) => String(item.id)));
-                form.querySelectorAll('.cart-item').forEach((row) => {
-                    if (updatedIds.has(row.dataset.productId)) return;
-                    document.getElementById(`remove-cart-item-${row.dataset.productId}`)?.remove();
-                    row.remove();
-                });
-
-                result.items.forEach((item) => {
-                    const row = form.querySelector(`.cart-item[data-product-id="${item.id}"]`);
-                    if (!row) return;
-                    const input = row.querySelector('input[type="number"]');
-                    input.value = item.qty;
-                    row.querySelector('[data-line-total]').textContent = `₹${formatMoney(item.lineTotal)}`;
-                });
-
-                document.getElementById('cart-meters').textContent = result.meters;
-                document.getElementById('cart-subtotal').textContent = formatMoney(result.subtotal);
-                document.getElementById('cart-discount').textContent = formatMoney(result.discount);
-                document.getElementById('cart-discount-total').textContent = formatMoney(result.discount);
-                document.getElementById('cart-discount-row').hidden = result.discount <= 0;
-                document.getElementById('cart-shipping').textContent = result.shipping > 0 ? `₹${formatMoney(result.shipping)}` : 'FREE';
-                document.getElementById('cart-tax').textContent = formatMoney(result.tax);
-                document.getElementById('cart-total').textContent = formatMoney(result.total);
-
-                const couponNotice = document.getElementById('cart-coupon-applied');
-                couponNotice.hidden = !result.coupon;
-                document.getElementById('cart-coupon-code').textContent = result.coupon ? `${result.coupon} applied` : '';
-
-                const freeShipping = document.getElementById('cart-free-shipping');
-                const remaining = Math.max(0, result.freeShippingLimit - (result.subtotal - result.discount));
-                freeShipping.querySelector('span').innerHTML = remaining > 0
-                    ? `Add <b id="cart-free-shipping-amount">₹${formatMoney(remaining)}</b> more to unlock free shipping.`
-                    : 'You have unlocked <b>free shipping</b>.';
-                freeShipping.querySelector('i > b').style.width = `${result.freeShippingLimit > 0 ? Math.min(100, ((result.subtotal - result.discount) / result.freeShippingLimit) * 100) : 100}%`;
-
-                document.querySelector('.cart-page .page-head p').textContent = `${result.items.length} fabric${result.items.length === 1 ? '' : 's'} · ${result.meters} metres`;
-                updateStatus.textContent = 'Cart quantities and prices updated.';
-            } catch (error) {
-                updateStatus.classList.add('error');
-                updateStatus.textContent = error.message;
-            } finally {
-                submit.disabled = false;
+        document.querySelector('.cart-summary a.btn')?.addEventListener('click', async (event) => {
+            event.preventDefault();
+            clearTimeout(updateTimer);
+            const checkoutUrl = event.currentTarget.href;
+            if (await updateCart()) {
+                window.location.assign(checkoutUrl);
             }
         });
     })();

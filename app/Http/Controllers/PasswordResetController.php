@@ -43,7 +43,7 @@ class PasswordResetController extends Controller
                 ]
             );
 
-            Mail::to($user->email)->send(new PasswordResetOtpMail($otp));
+            Mail::to($user->email)->queue(new PasswordResetOtpMail($otp));
         }
 
         return redirect()->route('password.otp.form')->with(

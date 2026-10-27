@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Mail\OrderPlacedMail;
 use App\Mail\StoreNotice;
 use App\Models\Enquiry;
 use App\Models\Order;
 use App\Models\NewsletterSubscriber;
 use App\Models\Setting;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -27,9 +29,40 @@ class StoreMailer
 
     public function orderCreated(Order $order): void
     {
-        $details = ['Order' => $order->order_no, 'Status' => $order->status, 'Payment' => $order->payment_status, 'Total' => 'INR '.number_format((float) $order->total, 2)];
-        $this->send($order->email, new StoreNotice('Order '.$order->order_no.' received', 'Thank you for shopping with Surat NX. Your order has been received.', $details));
-        $this->send(Setting::get('email'), new StoreNotice('New order '.$order->order_no, 'A new order has been placed.', $details + ['Customer' => $order->name, 'Email' => $order->email]));
+        $address = $order->address ?? [];
+        $orderDetails = [
+            'number' => $order->order_no,
+            'date' => $order->created_at?->format('d M Y, h:i A') ?? now()->format('d M Y, h:i A'),
+            'status' => $order->status,
+            'payment' => $order->payment_method.' - '.$order->payment_status,
+            'customer' => $order->name,
+            'email' => $order->email,
+            'phone' => $order->phone,
+            'address' => implode(', ', array_filter([
+                $address['line1'] ?? null,
+                $address['line2'] ?? null,
+                $address['landmark'] ?? null,
+                $address['city'] ?? null,
+                $address['state'] ?? null,
+                $address['pin'] ?? null,
+            ])),
+            'subtotal' => (float) $order->subtotal,
+            'discount' => (float) $order->discount,
+            'coupon' => $order->coupon_code,
+            'shipping' => (float) $order->shipping,
+            'tax' => (float) $order->tax,
+            'total' => (float) $order->total,
+        ];
+        $items = $order->items->map(fn ($item) => [
+            'name' => $item->name,
+            'sku' => $item->sku,
+            'qty' => (int) $item->qty,
+            'price' => (float) $item->price,
+            'total' => (float) $item->price * (int) $item->qty,
+            'image' => $item->image ? url('storage/'.$item->image) : null,
+        ])->all();
+
+        $this->send($order->email, new OrderPlacedMail($orderDetails, $items), Setting::get('email'));
     }
 
     public function paymentConfirmed(Order $order): void
@@ -85,16 +118,20 @@ class StoreMailer
         ));
     }
 
-    private function send(?string $recipient, StoreNotice $mail): void
+    private function send(?string $recipient, Mailable $mail, ?string $bcc = null): void
     {
         if (!$recipient || !filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
             return;
         }
 
         try {
-            Mail::to($recipient)->send($mail);
+            $message = Mail::to($recipient);
+            if ($bcc && filter_var($bcc, FILTER_VALIDATE_EMAIL) && strcasecmp($recipient, $bcc) !== 0) {
+                $message->bcc($bcc);
+            }
+            $message->queue($mail);
         } catch (Throwable $exception) {
-            Log::error('Store email delivery failed.', ['recipient' => $recipient, 'subject' => $mail->heading, 'error' => $exception->getMessage()]);
+            Log::error('Store email delivery failed.', ['recipient' => $recipient, 'subject' => $mail->envelope()->subject, 'error' => $exception->getMessage()]);
         }
     }
 }

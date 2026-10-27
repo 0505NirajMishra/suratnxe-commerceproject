@@ -31,14 +31,13 @@ Route::post('/reset-password', [\App\Http\Controllers\PasswordResetController::c
     ->middleware(['guest', 'throttle:8,1'])
     ->name('password.update');
 
-Route::post('/checkout/razorpay/orders', [\App\Http\Controllers\RazorpayController::class, 'create'])
-    ->middleware(['auth', 'customer', 'throttle:10,1'])
-    ->name('checkout.razorpay.create');
-Route::post('/checkout/razorpay/verify', [\App\Http\Controllers\RazorpayController::class, 'verify'])
-    ->middleware(['auth', 'customer', 'throttle:10,1'])
-    ->name('checkout.razorpay.verify');
-Route::post('/webhooks/razorpay', [\App\Http\Controllers\RazorpayController::class, 'webhook'])
-    ->name('webhooks.razorpay');
+Route::post('/payments/payu/return', [\App\Http\Controllers\PayUController::class, 'callback'])
+    ->name('payments.payu.callback');
+Route::post('/webhooks/payu', [\App\Http\Controllers\PayUController::class, 'webhook'])
+    ->name('webhooks.payu');
+Route::get('/payments/result/{order:order_no}', [\App\Http\Controllers\PayUController::class, 'result'])
+    ->middleware('signed')
+    ->name('payments.result');
 Route::post('/products/{product:slug}/reviews', [\App\Http\Controllers\ProductReviewController::class, 'store'])
     ->middleware(['auth', 'customer'])
     ->name('reviews.store');
@@ -57,6 +56,9 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'authenticate'])->middleware('throttle:8,1')->name('login.post');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [AuthController::class, 'store'])->middleware('throttle:8,1')->name('register.post');
+Route::get('/register/verify', [AuthController::class, 'registrationOtpForm'])->name('register.otp.form');
+Route::post('/register/verify', [AuthController::class, 'verifyRegistrationOtp'])->middleware('throttle:8,1')->name('register.otp.verify');
+Route::post('/register/verify/resend', [AuthController::class, 'resendRegistrationOtp'])->middleware('throttle:3,1')->name('register.otp.resend');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart');

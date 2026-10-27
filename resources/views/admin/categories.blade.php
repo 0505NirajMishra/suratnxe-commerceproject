@@ -10,7 +10,7 @@
             <div class="grid2">
                 <div class="field"><label for="category-name">Name *</label><input id="category-name" name="name" required maxlength="120" value="{{ old('name') }}"></div>
                 <div class="field"><label for="category-code">Unique code *</label><input id="category-code" name="code" required maxlength="10" value="{{ old('code') }}"></div>
-                <div class="field"><label for="category-image">Category image *</label><input id="category-image" type="file" name="image" accept="image/jpeg,image/png,image/webp" required><small>JPG, PNG or WebP, up to 5 MB.</small></div>
+                <div class="field"><label for="category-image">Category image *</label><input id="category-image" type="file" name="image" accept="image/jpeg,image/png,image/webp" required><small>JPG, PNG or WebP.</small></div>
                 <div class="field"><label for="category-description">Description</label><input id="category-description" name="description" maxlength="1000" value="{{ old('description') }}"></div>
                 <label class="field category-active"><span>Visible on storefront</span><input type="checkbox" name="is_active" value="1" checked></label>
             </div>

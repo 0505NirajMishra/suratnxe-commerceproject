@@ -17,29 +17,92 @@
         </nav>
 
         <section class="pd">
-            <div class="product-gallery gal" aria-label="{{ $product->name }} images">
+
+            <div class="product-gallery gal {{ $productImages->count() <= 1 ? 'single-image-layout' : '' }}" aria-label="{{ $product->name }} images">
                 @if($productImages->isNotEmpty())
-                    <div class="thumbs" aria-label="Choose product image">
-                        @foreach($productImages as $image)
-                            <button type="button"
-                                class="{{ $loop->first ? 'on' : '' }}"
-                                data-product-thumb
-                                data-image-src="{{ asset('storage/' . $image->path) }}"
-                                data-image-alt="{{ $product->name }} - image {{ $loop->iteration }}"
-                                aria-label="Show product image {{ $loop->iteration }}"
-                                aria-pressed="{{ $loop->first ? 'true' : 'false' }}">
-                                <img src="{{ asset('storage/' . $image->path) }}" alt="" loading="lazy">
-                            </button>
-                        @endforeach
-                    </div>
+
+                    {{-- Agar 1 se zyada images hain tabhi left thumbnails show honge --}}
+                    @if($productImages->count() > 1)
+                        <div class="thumbs thumbs-side" aria-label="Choose product image">
+                            @foreach($productImages as $image)
+                                @if($loop->index < 5)
+                                    <button
+                                        type="button"
+                                        class="{{ $loop->first ? 'on' : '' }}"
+                                        data-product-thumb
+                                        data-image-src="{{ asset('storage/' . $image->path) }}"
+                                        aria-label="Show product image {{ $loop->iteration }}"
+                                        aria-pressed="{{ $loop->first ? 'true' : 'false' }}"
+                                    >
+                                        <img
+                                            src="{{ asset('storage/' . $image->path) }}"
+                                            alt=""
+                                            loading="lazy"
+                                        >
+                                    </button>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+
+                    {{-- Main product image --}}
                     <div class="mainimg">
-                        <img src="{{ asset('storage/' . $firstImage->path) }}" alt="{{ $product->name }}" data-product-main-image>
-                        <button class="zoom" type="button" data-product-zoom aria-label="View larger image of {{ $product->name }}">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4M11 8v6M8 11h6"></path></svg>
+                        <img
+                            src="{{ asset('storage/' . $firstImage->path) }}"
+                            alt="{{ $product->name }}"
+                            data-product-main-image
+                        >
+
+                        <button
+                            class="zoom"
+                            type="button"
+                            data-product-zoom
+                            aria-label="View larger image of {{ $product->name }}"
+                        >
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                aria-hidden="true"
+                            >
+                                <circle cx="11" cy="11" r="7"></circle>
+                                <path d="m20 20-4-4M11 8v6M8 11h6"></path>
+                            </svg>
                         </button>
                     </div>
+
+                    {{-- Agar 6 se zyada images hain tabhi bottom thumbnails show honge --}}
+                    @if($productImages->count() > 6)
+                        <div class="thumbs thumbs-bottom" aria-label="More product images">
+                            @foreach($productImages as $image)
+                                @if($loop->index >= 6 && $loop->index < 10)
+                                    <button
+                                        type="button"
+                                        data-product-thumb
+                                        data-image-src="{{ asset('storage/' . $image->path) }}"
+                                        aria-label="Show product image {{ $loop->iteration }}"
+                                        aria-pressed="false"
+                                    >
+                                        <img
+                                            src="{{ asset('storage/' . $image->path) }}"
+                                            alt=""
+                                            loading="lazy"
+                                        >
+                                    </button>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+
                 @else
-                    <div class="mainimg product-fabric-placeholder" style="--fabric-one:{{ $fabricColors[0] ?? '#e5d7bf' }};--fabric-two:{{ $fabricColors[1] ?? '#9e8666' }};--fabric-three:{{ $fabricColors[2] ?? '#f0e6d5' }}">
+                    <div
+                        class="mainimg product-fabric-placeholder"
+                        style="--fabric-one:{{ $fabricColors[0] ?? '#e5d7bf' }};--fabric-two:{{ $fabricColors[1] ?? '#9e8666' }};--fabric-three:{{ $fabricColors[2] ?? '#f0e6d5' }}"
+                    >
                         <div class="fabric-art">SURAT NX</div>
                     </div>
                 @endif
@@ -62,7 +125,7 @@
                 </div>
                 <p class="pd-tax">Inclusive of applicable taxes</p>
                 @if($product->coupon?->isUsable())
-                    <p class="product-coupon-offer">Coupon {{ $product->coupon->code }} applies automatically to this fabric.</p>
+                    <p class="product-coupon-offer">Coupon {{ $product->coupon->code }} Applied.</p>
                 @endif
 
                 <div class="pd-badges" aria-label="Product information">

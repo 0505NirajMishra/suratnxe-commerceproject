@@ -930,13 +930,23 @@ h4 {
 }
 
 .catc h3 {
-  font-size: 20px;
+  font-size: clamp(20px, 1.6vw, 26px);
   font-weight: 500
 }
 
 .catc span {
-  font-size: 12.5px;
+  font-size: clamp(13px, .98vw, 16px);
   opacity: .85
+}
+
+@media (max-width: 600px) {
+  .catc h3 {
+    font-size: 18px
+  }
+
+  .catc span {
+    font-size: 12px
+  }
 }
 
 .rail-btn {
@@ -1265,6 +1275,26 @@ h4 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 22px
+}
+
+.testi.is-auto-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none
+}
+
+.testi.is-auto-carousel::-webkit-scrollbar {
+  display: none
+}
+
+.testi.is-auto-carousel .tcard {
+  flex: 0 0 var(--testimonial-card-width);
+  scroll-snap-align: start
+}
+
+.testi.is-auto-carousel .tcard:last-child {
+  display: flex
 }
 
 .tcard {

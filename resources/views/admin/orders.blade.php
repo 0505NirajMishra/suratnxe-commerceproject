@@ -50,8 +50,6 @@
                             <form method="post" action="{{ route('admin.orders.update', $order) }}">
                                 @csrf @method('PATCH')
                                 <div class="field"><label for="status-{{ $order->id }}">Status</label><select id="status-{{ $order->id }}" name="status" required>@foreach(\App\Models\Order::STATUSES as $status)<option value="{{ $status }}" @selected($order->status === $status)>{{ $status }}</option>@endforeach</select></div>
-                                <div class="field"><label for="courier-{{ $order->id }}">Courier</label><input id="courier-{{ $order->id }}" name="courier" value="{{ $order->courier }}" maxlength="120"></div>
-                                <div class="field"><label for="tracking-{{ $order->id }}">Tracking number</label><input id="tracking-{{ $order->id }}" name="tracking_no" value="{{ $order->tracking_no }}" maxlength="120"></div>
                                 <div class="field"><label for="payment-{{ $order->id }}">Payment status</label><select id="payment-{{ $order->id }}" name="payment_status" required>@foreach(['Pending', 'Paid', 'COD', 'Failed', 'Refunded'] as $paymentStatus)<option value="{{ $paymentStatus }}" @selected($order->payment_status === $paymentStatus)>{{ $paymentStatus }}</option>@endforeach</select></div>
                                 <button class="btn btn-dark btn-sm">Save Update</button>
                             </form>

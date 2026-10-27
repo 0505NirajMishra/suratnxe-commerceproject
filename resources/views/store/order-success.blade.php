@@ -1,5 +1,13 @@
 @extends('layouts.app')
-@section('title', 'Order confirmed - Surat NX')
+@section('title')
+    @if ($order->payment_method === 'PayU' && $order->payment_status === 'Pending')
+        Payment processing - Surat NX
+    @elseif ($order->payment_method === 'PayU' && $order->payment_status === 'Failed')
+        Payment failed - Surat NX
+    @else
+        Order confirmed - Surat NX
+    @endif
+@endsection
 @section('content')
 @php
     $deliveryAddress = collect($order->address ?? [])
@@ -8,6 +16,8 @@
         ->implode(', ');
     $estimatedDelivery = $order->eta();
     $trackUrl = route('track', ['order_no' => $order->order_no, 'email' => $order->email]);
+    $paymentPending = $order->payment_method === 'PayU' && $order->payment_status === 'Pending';
+    $paymentFailed = $order->payment_method === 'PayU' && $order->payment_status === 'Failed';
 @endphp
 <main class="sec order-success-page">
     <div class="wrap">
@@ -15,9 +25,19 @@
             <span class="order-success-check" aria-hidden="true">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
             </span>
-            <p class="order-success-eyebrow">ORDER CONFIRMED</p>
-            <h1>Thank you, {{ Str::before($order->name, ' ') }}!</h1>
-            <p>Your order <strong>{{ $order->order_no }}</strong> has been placed. A confirmation has been sent to {{ $order->email }}.</p>
+            @if ($paymentPending)
+                <p class="order-success-eyebrow">PAYMENT PROCESSING</p>
+                <h1>Payment confirmation pending</h1>
+                <p>PayU is confirming payment for order <strong>{{ $order->order_no }}</strong>. Please do not pay again; this page will reflect the verified payment status when you refresh.</p>
+            @elseif ($paymentFailed)
+                <p class="order-success-eyebrow">PAYMENT NOT COMPLETED</p>
+                <h1>We could not confirm your payment</h1>
+                <p>Order <strong>{{ $order->order_no }}</strong> is held temporarily while we reconcile its final status. If your account was debited, do not pay again; contact support with this order number.</p>
+            @else
+                <p class="order-success-eyebrow">ORDER CONFIRMED</p>
+                <h1>Thank you, {{ Str::before($order->name, ' ') }}!</h1>
+                <p>Your order <strong>{{ $order->order_no }}</strong> has been placed. A confirmation has been sent to {{ $order->email }}.</p>
+            @endif
         </section>
 
         <div class="order-success-grid">

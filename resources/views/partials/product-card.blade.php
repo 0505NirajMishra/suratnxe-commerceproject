@@ -19,7 +19,9 @@
         <h3><a href="{{ route('product', $p) }}">{{ $p->name }}</a></h3>
         <p class="pmeta">{{ $p->category->name ?? '' }} · {{ $p->sku }}</p>
         <div class="pprice"><b>₹{{ number_format($p->price, 2) }}</b><span> / metre</span>@if($p->mrp > $p->price)<s>₹{{ number_format($p->mrp, 2) }}</s>@endif</div>
-        @if($p->coupon?->isUsable())<p class="product-coupon-offer">Code {{ $p->coupon->code }} · applies automatically</p>@endif
+        {{-- @if($p->coupon?->isUsable())
+            <p class="product-coupon-offer">Code {{ $p->coupon->code }} · applies automatically</p>
+        @endif --}}
         @if($p->stock < 1)<p class="stock-warning">Currently out of stock</p>@endif
         <form method="post" action="{{ route('cart.add') }}">
             @csrf

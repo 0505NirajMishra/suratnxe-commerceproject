@@ -54,7 +54,7 @@
                     <div class="field">
                         <label for="return-photos-{{ $order->id }}">Product photos (required, up to 5)</label>
                         <input id="return-photos-{{ $order->id }}" type="file" name="photos[]" accept="image/jpeg,image/png,image/webp" multiple required>
-                        <small>Upload clear photos showing the product or issue. JPG, PNG or WEBP, up to 5 MB each.</small>
+                        <small>Upload clear photos showing the product or issue. JPG, PNG or WEBP.</small>
                     </div>
                     <button class="btn btn-dark" type="submit">Submit request</button>
                 </form>

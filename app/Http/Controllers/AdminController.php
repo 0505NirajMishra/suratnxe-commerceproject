@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Jobs\ProcessProductImages;
 use App\Models\{Category,Coupon,Enquiry,Order,Product,ProductImage,Setting,User}; use Illuminate\Http\Request; use Illuminate\Support\Facades\Hash; use Illuminate\Support\Str; use Illuminate\Support\Facades\Storage; use Illuminate\Validation\Rule;
 class AdminController extends Controller {
  public function login()
@@ -30,6 +31,7 @@ class AdminController extends Controller {
  public function dashboard(){return view('admin.dashboard',['stats'=>['products'=>Product::count(),'orders'=>Order::count(),'customers'=>User::where('role','customer')->count(),'revenue'=>Order::where('payment_status','Paid')->sum('total')],'orders'=>Order::latest()->take(8)->get()]);}
  public function products(Request $r){$products=Product::with('category')->when($r->q,fn($q)=>$q->where('name','like','%'.$r->q.'%')->orWhere('sku','like','%'.$r->q.'%'))->latest()->paginate(15)->withQueryString();return view('admin.products',compact('products'));}
  public function productCreate(){return view('admin.product-form',['product'=>new Product,'categories'=>Category::orderBy('name')->get(),'coupons'=>Coupon::orderBy('code')->get()]);} public function productEdit(Product $product){$product->load('images');return view('admin.product-form',['product'=>$product,'categories'=>Category::orderBy('name')->get(),'coupons'=>Coupon::orderBy('code')->get()]);}
+
  public function productSave(Request $r,?Product $product=null)
  {
   $product=$product?:new Product;
@@ -50,22 +52,60 @@ class AdminController extends Controller {
    'status'=>'required|in:active,inactive',
    'tags'=>'nullable|string|max:255',
    'images'=>[$product->exists?'nullable':'required','array','min:'.($product->exists?0:1),'max:10'],
-   'images.*'=>'image|mimes:jpg,jpeg,png,webp|max:5120',
+   // Avoid Laravel's full image-content rule in the request process. The queued job
+   // performs a lightweight readability check after the upload has been stored.
+   'images.*'=>['bail','required','file','mimes:jpg,jpeg,png,webp'],
   ]);
   $images=$r->file('images',[]);
   unset($data['images']);
   $data['status']=$data['status']==='inactive'?'draft':'active';
   $data['slug']=Str::slug($data['name']).'-'.Str::lower(Str::random(5));
   $data['tags']=array_values(array_filter(array_map('trim',explode(',', $data['tags']??''))));
-  $product->fill($data);
-  $product->save();
+
+  $storedImages=[];
   foreach($images as $image){
+   if(!$image || !$image->isValid()){
+    Storage::disk('public')->delete($storedImages);
+    return back()->withErrors(['images'=>'One or more images failed to upload. Please try again.'])->withInput($r->except('images'));
+   }
    $path=$image->store('products','public');
-   if(!$path) return back()->withErrors(['images'=>'One or more fabric images could not be saved.'])->withInput();
-   $product->images()->create(['path'=>$path,'sort_order'=>$product->images()->count()]);
+   if(!$path){
+    Storage::disk('public')->delete($storedImages);
+    return back()->withErrors(['images'=>'One or more fabric images could not be saved. Please try again.'])->withInput($r->except('images'));
+   }
+   $storedImages[]=$path;
   }
-  return redirect()->route('admin.products')->with('success','Fabric saved successfully.');
+
+  try {
+   \Illuminate\Support\Facades\DB::transaction(function () use ($product, $data, $storedImages) {
+    $product->fill($data);
+    if (count($storedImages)) {
+     $product->image_processing_status='pending';
+    }
+    $product->save();
+   });
+  } catch (\Throwable $exception) {
+   Storage::disk('public')->delete($storedImages);
+   throw $exception;
+  }
+
+  if (count($storedImages)) {
+   try {
+    ProcessProductImages::dispatch($product->id, $storedImages)->afterCommit();
+   } catch (\Throwable $exception) {
+    report($exception);
+    $product->forceFill(['image_processing_status'=>'failed'])->save();
+    return redirect()->route('admin.products.edit', $product)
+     ->with('error','Fabric details were saved, but image processing could not be queued. Check the queue/database configuration and try again.');
+   }
+  }
+
+  $message=count($storedImages)
+   ? 'Fabric saved.'
+   : 'Fabric saved successfully.';
+  return redirect()->route('admin.products')->with('success',$message);
  }
+
  public function productDelete(Product $product){$product->delete();return back()->with('success','Fabric deleted.');}
  public function categories(){return view('admin.categories',['categories'=>Category::withCount('products')->orderBy('sort_order')->paginate(15)->withQueryString()]);}
  public function categorySave(Request $r)
@@ -74,7 +114,7 @@ class AdminController extends Controller {
    'name'=>'required|string|max:120',
    'code'=>['required','string','max:10',Rule::unique('categories','code')],
    'description'=>'nullable|string|max:1000',
-   'image'=>'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+   'image'=>'required|image|mimes:jpg,jpeg,png,webp',
    'is_active'=>'nullable|boolean',
   ]);
   $path=$r->file('image')->store('categories','public');
@@ -92,7 +132,7 @@ class AdminController extends Controller {
    'name'=>'required|string|max:120',
    'code'=>['required','string','max:10',Rule::unique('categories','code')->ignore($category->id)],
    'description'=>'nullable|string|max:1000',
-   'image'=>'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+   'image'=>'nullable|image|mimes:jpg,jpeg,png,webp',
    'sort_order'=>'required|integer|min:0|max:65535',
    'is_active'=>'nullable|boolean',
   ]);
@@ -173,7 +213,7 @@ class AdminController extends Controller {
    'name'=>'required|string|max:120',
    'email'=>['required','email','max:190',Rule::unique('users','email')->ignore($user->id)],
    'phone'=>'nullable|string|max:20',
-   'profile_photo'=>'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+   'profile_photo'=>'nullable|image|mimes:jpg,jpeg,png,webp',
    'password'=>'nullable|confirmed|min:8',
    'current_password'=>'required_with:password|string',
   ]);

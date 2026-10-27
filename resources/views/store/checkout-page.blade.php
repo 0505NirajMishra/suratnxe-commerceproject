@@ -85,11 +85,11 @@
                         <div class="checkout-options">
                             @if ($onlineEnabled)
                                 <label class="opt checkout-option checkout-online-option">
-                                    <input type="radio" name="payment_method" value="Razorpay" required>
+                                    <input type="radio" name="payment_method" value="PayU" required>
                                     <span class="checkout-option-icon" aria-hidden="true">▤</span>
                                     <span class="checkout-option-text">
                                         <b>Pay online securely</b>
-                                        <small>Choose a payment method in the secure payment window</small>
+                                        <small>Pay securely through PayU</small>
                                         <span class="checkout-payment-types"><i>UPI / QR</i><i>Credit / Debit card</i><i>Net Banking</i><i>Wallets</i></span>
                                     </span>
                                 </label>
@@ -138,86 +138,6 @@
     </div>
 </main>
 
-@if ($onlineEnabled)
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script>
-        (() => {
-            const form = document.getElementById('checkout-form');
-            const submit = document.getElementById('checkout-submit');
-            const csrf = document.querySelector('meta[name="csrf-token"]').content;
-            let checkoutInstance = null;
-
-            const postJson = async (url, body) => {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
-                    body: JSON.stringify(body),
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.message || Object.values(result.errors || {}).flat().join(' '));
-                return result;
-            };
-
-            form.addEventListener('submit', async (event) => {
-                if (checkoutInstance) {
-                    event.preventDefault();
-                    checkoutInstance.open();
-                    return;
-                }
-                if (form.querySelector('[name="payment_method"]:checked')?.value !== 'Razorpay') return;
-                event.preventDefault();
-                submit.disabled = true;
-
-                try {
-                    const formData = Object.fromEntries(new FormData(form));
-                    const payment = await postJson(@json(route('checkout.razorpay.create')), formData);
-                    form.querySelectorAll('[name="payment_method"]').forEach((input) => { input.disabled = true; });
-                    checkoutInstance = new Razorpay({
-                        key: payment.key,
-                        amount: payment.amount,
-                        currency: payment.currency,
-                        name: payment.name,
-                        description: payment.description,
-                        order_id: payment.razorpayOrderId,
-                        prefill: payment.prefill,
-                        handler: async (gatewayResponse) => {
-                            try {
-                                const result = await postJson(@json(route('checkout.razorpay.verify')), gatewayResponse);
-                                window.location.assign(result.redirect);
-                            } catch (error) {
-                                window.alert(error.message);
-                            }
-                        },
-                        modal: { ondismiss: () => { submit.disabled = false; } },
-                    });
-                    checkoutInstance.on('payment.failed', (failure) => {
-                        window.alert(failure.error?.description || 'Payment failed. Please try again.');
-                        submit.disabled = false;
-                    });
-                    checkoutInstance.open();
-                } catch (error) {
-                    window.alert(error.message);
-                    submit.disabled = false;
-                }
-            });
-
-            const savedAddress = document.getElementById('saved-address');
-            if (savedAddress) {
-                const fillAddress = () => {
-                    const option = savedAddress.selectedOptions[0];
-                    if (!option?.value) return;
-                    ['name', 'phone', 'pin', 'line1', 'line2', 'landmark', 'city', 'state'].forEach((field) => {
-                        const input = form.elements[field];
-                        if (input) input.value = option.dataset[field] || '';
-                    });
-                };
-                savedAddress.addEventListener('change', fillAddress);
-                fillAddress();
-            }
-        })();
-    </script>
-@else
-@endif
 <script>
     (() => {
         const form = document.getElementById('checkout-form');

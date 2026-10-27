@@ -75,16 +75,37 @@ class CartController extends Controller
         return redirect()->route('cart')->with('success', 'Item removed.');
     }
 
+    // public function coupon(Request $request, CartService $cart)
+    // {
+    //     $data = $request->validate(['code' => 'nullable|string|max:50']);
+    //     $cart->applyCoupon($data['code'] ?? null);
+    //     $totals = $cart->totals();
+
+    //     if ($totals['couponErr']) {
+    //         return back()->withErrors(['code' => $totals['couponErr']]);
+    //     }
+
+    //     return back()->with('success', 'Coupon applied.');
+    // }
+    
     public function coupon(Request $request, CartService $cart)
     {
-        $data = $request->validate(['code' => 'nullable|string|max:50']);
+        $data = $request->validate([
+            'code' => 'nullable|string|max:50',
+        ]);
+
         $cart->applyCoupon($data['code'] ?? null);
+
         $totals = $cart->totals();
 
         if ($totals['couponErr']) {
-            return back()->withErrors(['code' => $totals['couponErr']]);
+            return back()->withErrors([
+                'code' => $totals['couponErr'],
+            ])->withInput();
         }
 
         return back()->with('success', 'Coupon applied.');
     }
+
+
 }

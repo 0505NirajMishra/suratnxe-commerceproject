@@ -33,7 +33,7 @@ class ReturnRequestController extends Controller
             'reason' => ['required', Rule::in(['Damaged', 'Wrong item', 'Quality issue', 'Other'])],
             'details' => 'required|string|max:2000',
             'photos' => 'required|array|min:1|max:5',
-            'photos.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'photos.*' => 'required|image|mimes:jpg,jpeg,png,webp',
         ]);
 
         $order = $request->user()->orders()->whereKey($order->id)->where('status', 'Delivered')->firstOrFail();
