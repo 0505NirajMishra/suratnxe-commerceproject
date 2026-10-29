@@ -374,5 +374,24 @@
         button.setAttribute('aria-pressed', String(shouldShow));
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('#toasts .toast').forEach(function (toast) {
+            setTimeout(function () {
+                toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-8px)';
+
+                setTimeout(function () {
+                    const container = toast.closest('#toasts');
+                    toast.remove();
+
+                    if (container && !container.querySelector('.toast')) {
+                        container.remove();
+                    }
+                }, 450);
+
+            }, 3500);
+        });
+    });
 
 })();

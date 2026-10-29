@@ -89,10 +89,30 @@
         <div class="sec-h"><div><h2>What our customers say</h2><p>Boutiques, designers and home tailors who order from us.</p></div></div>
         <div class="testi" data-testimonial-carousel>
             @forelse($testimonials as $review)
-                <figure class="tcard">
+                <figure class="tcard" >
                     <span class="stars" aria-label="{{ $review->rating }} out of 5">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
                     <q>{{ $review->comment }}</q>
-                    <figcaption class="who"><span class="avatar">{{ mb_strtoupper(mb_substr($review->user->name, 0, 1)) }}</span><div><b>{{ $review->user->name }}</b><span>{{ $review->product->name }}</span></div></figcaption>
+                    <figcaption class="who">
+                        <span class="avatar">
+
+                            @if ($review->user?->profile_photo_path)
+                                <img
+                                    src="{{ asset('storage/' . $review->user->profile_photo_path) }}"
+                                    alt="{{ $review->user->name }}"
+                                    loading="lazy"
+                                >
+                            @else
+                                {{ mb_strtoupper(mb_substr($review->user->name ?? 'U', 0, 1)) }}
+                            @endif
+
+                        </span>
+                        
+                        <div>
+                            <b>{{ $review->user->name }}</b>
+                            <span>{{ $review->product->name }}</span>
+                        </div>
+
+                    </figcaption>
                 </figure>
             @empty
                 @foreach([
@@ -110,6 +130,7 @@
         </div>
     </div>
 </section>
+
 
 <section class="band">
     <div class="wrap"><div><h2>{{ $settings['home_bulk_title'] }}</h2><p class="muted">{{ $settings['home_bulk_copy'] }}</p></div><a class="btn btn-dark" href="{{ route('contact') }}">{{ $settings['home_bulk_button'] }}</a></div>

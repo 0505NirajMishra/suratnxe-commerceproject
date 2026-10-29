@@ -77,6 +77,6 @@ class Setting extends Model
         foreach ($values as $k => $v) {
             self::updateOrCreate(['key' => $k], ['value' => $v]);
         }
-        Cache::forget('settings');
+        Cache::forever('settings', self::query()->pluck('value', 'key')->all());
     }
 }
