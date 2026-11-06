@@ -55,6 +55,16 @@
                 </tbody>
             </table>
         </div>
+        <div class="admin-table-pagination">
+            <p class="admin-pagination-summary">
+                @if($orders->total())
+                    Showing <strong>{{ $orders->firstItem() }}–{{ $orders->lastItem() }}</strong> of <strong>{{ $orders->total() }}</strong> orders
+                @else
+                    No orders to show
+                @endif
+            </p>
+            {{ $orders->links() }}
+        </div>
     </div>
 </section>
 @endsection

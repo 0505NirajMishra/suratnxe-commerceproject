@@ -36,90 +36,6 @@
         if (toggle) toggle.setAttribute('aria-expanded', String(expanded));
     };
 
-    const testimonialCarousel = document.querySelector('[data-testimonial-carousel]');
-    const setupTestimonialCarousel = () => {
-        if (!testimonialCarousel) return;
-
-        testimonialCarousel.querySelectorAll('[data-carousel-clone]').forEach((clone) => clone.remove());
-        testimonialCarousel.classList.remove('is-auto-carousel');
-        testimonialCarousel.style.removeProperty('max-width');
-        testimonialCarousel.style.removeProperty('--testimonial-card-width');
-
-        const cards = [...testimonialCarousel.querySelectorAll('.tcard')];
-        cards.forEach((card) => card.style.removeProperty('flex'));
-        if (cards.length < 2) return;
-
-        const styles = getComputedStyle(testimonialCarousel);
-        const columns = Math.max(1, styles.gridTemplateColumns.split(' ').length);
-        const gap = parseFloat(styles.columnGap) || 0;
-        const cardWidth = cards[0].getBoundingClientRect().width;
-        const visibleCards = Math.min(columns, cards.length);
-        const viewportWidth = visibleCards * cardWidth + (visibleCards - 1) * gap;
-
-        testimonialCarousel.classList.add('is-auto-carousel');
-        testimonialCarousel.style.setProperty('--testimonial-card-width', `${cardWidth}px`);
-        if (cards.length < columns) {
-            testimonialCarousel.style.maxWidth = `${viewportWidth}px`;
-        }
-
-        let cloneIndex = 0;
-        while (
-            testimonialCarousel.scrollWidth <= testimonialCarousel.clientWidth + 1
-            && cloneIndex < cards.length * 2
-        ) {
-            const clone = cards[cloneIndex % cards.length].cloneNode(true);
-            clone.dataset.carouselClone = 'true';
-            clone.setAttribute('aria-hidden', 'true');
-            testimonialCarousel.append(clone);
-            cloneIndex++;
-        }
-    };
-
-    setupTestimonialCarousel();
-    let testimonialResizeTimer;
-    window.addEventListener('resize', () => {
-        window.clearTimeout(testimonialResizeTimer);
-        testimonialResizeTimer = window.setTimeout(setupTestimonialCarousel, 150);
-    });
-
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.querySelectorAll('[data-category-rail], [data-testimonial-carousel]').forEach((carousel) => {
-            const firstCard = carousel.firstElementChild;
-            if (!firstCard) return;
-            const interactionArea = carousel.closest('.rail-wrap') || carousel;
-
-            let interactionUntil = 0;
-            const pauseAfterInteraction = () => {
-                interactionUntil = Date.now() + 10000;
-            };
-            interactionArea.addEventListener('pointerdown', pauseAfterInteraction);
-            interactionArea.addEventListener('wheel', pauseAfterInteraction, { passive: true });
-            interactionArea.addEventListener('keydown', pauseAfterInteraction);
-
-            window.setInterval(() => {
-                if (
-                    document.hidden
-                    || interactionArea.matches(':hover')
-                    || interactionArea.contains(document.activeElement)
-                    || Date.now() < interactionUntil
-                ) {
-                    return;
-                }
-
-                const gap = parseFloat(getComputedStyle(carousel).columnGap) || 0;
-                const distance = firstCard.getBoundingClientRect().width + gap;
-                const end = carousel.scrollWidth - carousel.clientWidth;
-                if (end <= 1) return;
-
-                if (carousel.scrollLeft >= end - 2) {
-                    carousel.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    carousel.scrollBy({ left: distance, behavior: 'smooth' });
-                }
-            }, 4000);
-        });
-    }
-
     const closeDrawer = () => setOpen('nav-open', false, drawerToggle);
     const closeAdminMenu = () => setOpen('side-open', false, adminToggle);
     const closeFilters = () => {
@@ -373,6 +289,94 @@
 
         button.setAttribute('aria-pressed', String(shouldShow));
     });
+
+    const testimonialCarousel = document.querySelector('[data-testimonial-carousel]');
+
+    const setupTestimonialCarousel = () => {
+        if (!testimonialCarousel) return;
+
+        testimonialCarousel.querySelectorAll('[data-carousel-clone]').forEach((clone) => clone.remove());
+        testimonialCarousel.classList.remove('is-auto-carousel');
+        testimonialCarousel.style.removeProperty('max-width');
+        testimonialCarousel.style.removeProperty('--testimonial-card-width');
+
+        const cards = [...testimonialCarousel.querySelectorAll('.tcard')];
+        cards.forEach((card) => card.style.removeProperty('flex'));
+        if (cards.length < 2) return;
+
+        const styles = getComputedStyle(testimonialCarousel);
+        const columns = Math.max(1, styles.gridTemplateColumns.split(' ').length);
+        const gap = parseFloat(styles.columnGap) || 0;
+        const cardWidth = cards[0].getBoundingClientRect().width;
+        const visibleCards = Math.min(columns, cards.length);
+        const viewportWidth = visibleCards * cardWidth + (visibleCards - 1) * gap;
+
+        testimonialCarousel.classList.add('is-auto-carousel');
+    
+        testimonialCarousel.style.setProperty('--testimonial-card-width', `${cardWidth}px`);
+
+        if (cards.length < columns) {
+            testimonialCarousel.style.maxWidth = `${viewportWidth}px`;
+        }
+
+        let cloneIndex = 0;
+        while (
+            testimonialCarousel.scrollWidth <= testimonialCarousel.clientWidth + 1
+            && cloneIndex < cards.length * 2
+        ) {
+            const clone = cards[cloneIndex % cards.length].cloneNode(true);
+            clone.dataset.carouselClone = 'true';
+            clone.setAttribute('aria-hidden', 'true');
+            testimonialCarousel.append(clone);
+            cloneIndex++;
+        }
+    };
+
+    setupTestimonialCarousel();
+    let testimonialResizeTimer;
+    window.addEventListener('resize', () => {
+        window.clearTimeout(testimonialResizeTimer);
+        testimonialResizeTimer = window.setTimeout(setupTestimonialCarousel, 150);
+    });
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('[data-category-rail], [data-testimonial-carousel]').forEach((carousel) => {
+            const firstCard = carousel.firstElementChild;
+            if (!firstCard) return;
+            const interactionArea = carousel.closest('.rail-wrap') || carousel;
+
+            let interactionUntil = 0;
+            const pauseAfterInteraction = () => {
+                interactionUntil = Date.now() + 10000;
+            };
+            interactionArea.addEventListener('pointerdown', pauseAfterInteraction);
+            interactionArea.addEventListener('wheel', pauseAfterInteraction, { passive: true });
+            interactionArea.addEventListener('keydown', pauseAfterInteraction);
+
+            window.setInterval(() => {
+                if (
+                    document.hidden
+                    || interactionArea.matches(':hover')
+                    || interactionArea.contains(document.activeElement)
+                    || Date.now() < interactionUntil
+                ) {
+                    return;
+                }
+
+                const gap = parseFloat(getComputedStyle(carousel).columnGap) || 0;
+                const distance = firstCard.getBoundingClientRect().width + gap;
+                const end = carousel.scrollWidth - carousel.clientWidth;
+                if (end <= 1) return;
+
+                if (carousel.scrollLeft >= end - 2) {
+                    carousel.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    carousel.scrollBy({ left: distance, behavior: 'smooth' });
+                }
+            }, 4000);
+        });
+    }
+
 
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('#toasts .toast').forEach(function (toast) {

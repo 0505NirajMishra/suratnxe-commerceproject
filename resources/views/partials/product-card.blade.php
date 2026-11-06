@@ -8,7 +8,7 @@
         @if(in_array('new', $p->tags ?? []))
             <span class="pbadge">NEW</span>
         @elseif($p->mrp && $p->mrp > $p->price)
-            <span class="pbadge red">{{ round((1 - $p->price / $p->mrp) * 100) }}% OFF</span>
+            {{--  <span class="pbadge red">{{ round((1 - $p->price / $p->mrp) * 100) }}% OFF</span/>  --}}
         @endif
     </a>
     <form class="pwish-form" method="post" action="{{ route('wishlist.toggle', $p) }}">

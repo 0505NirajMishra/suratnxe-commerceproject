@@ -90,6 +90,7 @@
     </form>
     <script>window.laravelValidationErrors = @json($errors->messages());</script>
     <script src="{{ asset('js/app.js') }}?v={{ filemtime(public_path('js/app.js')) }}" defer></script>
+    <script src="{{ asset('js/admin-images.js') }}?v={{ filemtime(public_path('js/admin-images.js')) }}" defer></script>
     
     <script>
     (() => {

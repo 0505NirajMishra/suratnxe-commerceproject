@@ -131,7 +131,6 @@
     </div>
 </section>
 
-
 <section class="band">
     <div class="wrap"><div><h2>{{ $settings['home_bulk_title'] }}</h2><p class="muted">{{ $settings['home_bulk_copy'] }}</p></div><a class="btn btn-dark" href="{{ route('contact') }}">{{ $settings['home_bulk_button'] }}</a></div>
 </section>

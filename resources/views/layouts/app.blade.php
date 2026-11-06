@@ -11,10 +11,10 @@
     
     <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ filemtime(public_path('css/style.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}"> 
-   
+  
 
-    {{-- <link rel="stylesheet" href="https://lanky-ambulance-dosage.ngrok-free.dev/css/style.css?v={{ filemtime(public_path('css/style.css')) }}">
-    <link rel="stylesheet" href="https://lanky-ambulance-dosage.ngrok-free.dev/css/admin.css"> --}}
+    {{--  <link rel="stylesheet" href="https://lanky-ambulance-dosage.ngrok-free.dev/css/style.css?v={{ filemtime(public_path('css/style.css')) }}">
+    <link rel="stylesheet" href="https://lanky-ambulance-dosage.ngrok-free.dev/css/admin.css">  --}}
 
     <style>
         .flash {
@@ -270,7 +270,7 @@
                 grid-row: 1;
                 position: relative;
                 width: 100%;
-                aspect-ratio: 1 / 1;
+                height: calc(4 * var(--thumb-size) + 3 * var(--gallery-gap));
                 min-width: 0;
                 margin: 0;
                 padding: 0;
@@ -292,11 +292,17 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                height: 100%; /* <--- Yeh main change hai jo left side ki height ko cover karega */
+                height: auto;
                 gap: var(--gallery-gap);
                 width: var(--thumb-size);
                 margin: 0;
                 padding: 0;
+                align-self: stretch;
+            }
+
+            .product-gallery.gal > .thumbs-side.compact-thumbs {
+                justify-content: flex-start;
+                height: auto;
                 align-self: start;
             }
 
@@ -304,12 +310,13 @@
             .product-gallery.gal > .thumbs-side button {
                 display: block;
                 width: 100%;
-                height: auto;
-                flex: 1; /* <--- Yeh thumbnails ko vertically stretch karke space fill kar dega */
+                height: var(--thumb-size);
+                flex: 0 0 var(--thumb-size);
                 min-width: 0;
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
+                aspect-ratio: auto;
                 overflow: hidden;
                 border: 1px solid #e5ddd2;
                 border-radius: 0;
@@ -334,9 +341,9 @@
                 grid-column: 2;
                 grid-row: 2;
                 display: grid;
-                grid-template-columns: repeat(4, minmax(0, 1fr));
+                grid-template-columns: repeat(4, var(--thumb-size));
                 gap: 10px;
-                width: 100%;
+                width: max-content;
                 min-width: 0;
                 margin-top: 10px;
                 padding: 0;
@@ -345,8 +352,10 @@
 
             /* Keep bottom thumbnails exactly square */
             .product-gallery.gal > .thumbs-bottom button {
-                height: auto;
-                aspect-ratio: 1 / 1;
+                width: var(--thumb-size);
+                height: var(--thumb-size);
+                aspect-ratio: auto;
+                box-sizing: border-box;
             }
 
             /* ZOOM BUTTON */
@@ -407,7 +416,7 @@
                 }
 
                 .product-gallery.gal > .thumbs-bottom {
-                    grid-template-columns: repeat(4, minmax(0, 1fr));
+                    grid-template-columns: repeat(4, var(--thumb-size));
                     gap: 6px; /* <--- Mobile view ke liye proper gap taaki images aapas mein na chipke */
                 }
 
@@ -423,7 +432,7 @@
             @media (max-width: 600px) {
                 .product-gallery.gal > .thumbs-bottom {
                     display: grid;
-                    grid-template-columns: repeat(4, minmax(0, 1fr));
+                    grid-template-columns: repeat(4, var(--thumb-size));
                     gap: 6px;
                     background: transparent !important; /* Grey background hatane ke liye */
                     margin-top: 8px;
@@ -431,8 +440,9 @@
                 }
 
                 .product-gallery.gal > .thumbs-bottom button {
-                    height: auto !important;
-                    aspect-ratio: 1 / 1 !important;
+                    width: var(--thumb-size) !important;
+                    height: var(--thumb-size) !important;
+                    aspect-ratio: auto !important;
                     background: #fff;
                     border: 1px solid #e5ddd2;
                     padding: 0;
@@ -608,7 +618,7 @@
     @yield('content')
     @include('partials.footer-dynamic')
     <script src="{{ asset('js/app.js') }}?v={{ filemtime(public_path('js/app.js')) }}" defer></script>
-    {{-- <script src="https://lanky-ambulance-dosage.ngrok-free.dev/js/app.js?v={{ filemtime(public_path('js/app.js')) }}" defer></script> --}}
+    {{--  <script src="https://lanky-ambulance-dosage.ngrok-free.dev/js/app.js?v={{ filemtime(public_path('js/app.js')) }}" defer></script>  --}}
 </body>
 
 </html>

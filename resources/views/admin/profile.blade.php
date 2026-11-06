@@ -8,14 +8,27 @@
         <form method="post" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data">
             @csrf @method('PUT')
             <div class="admin-profile-photo">
-                <span class="avatar">
-                    @if(auth()->user()->profile_photo_path)
-                        <img src="{{ asset('storage/'.auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}">
-                    @else
+                @if(auth()->user()->profile_photo_path)
+                    <span class="admin-image-card admin-profile-image-card" data-admin-existing-image>
+                        <img src="{{ asset('storage/'.auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" class="admin-image-thumbnail">
+                        <input type="checkbox" name="remove_profile_photo" value="1" class="admin-image-removal-input" data-admin-image-removal>
+                        <button class="admin-image-remove" type="button" data-toggle-image-removal aria-pressed="false" aria-label="Remove profile picture" title="Remove profile picture">×</button>
+                        <span class="admin-image-removal-note">Will be removed on save</span>
+                    </span>
+                @else
+                    <span class="avatar">
                         {{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}
-                    @endif
-                </span>
-                <div class="field"><label for="admin-profile-photo">Profile picture</label><input id="admin-profile-photo" type="file" name="profile_photo" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WebP.</small></div>
+                    </span>
+                @endif
+                <div class="field">
+                    <label for="admin-profile-photo">Profile picture</label>
+                    <input id="admin-profile-photo" type="file" name="profile_photo" accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.ico,.avif"
+                           data-admin-image-input data-image-limit="1" data-replace-existing-image
+                           data-image-input-error-target="admin-profile-photo-error">
+                    <small>JPG, JPEG, PNG, WebP, GIF, SVG, ICO or AVIF.</small>
+                    <small id="admin-profile-photo-error" class="text-danger" data-image-input-error></small>
+                    <div class="admin-image-previews" data-admin-image-previews aria-live="polite"></div>
+                </div>
             </div>
             <div class="grid2">
                 <div class="field"><label for="admin-profile-name">Name *</label><input id="admin-profile-name" name="name" required maxlength="120" value="{{ old('name', auth()->user()->name) }}"></div>

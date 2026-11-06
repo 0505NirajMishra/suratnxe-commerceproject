@@ -23,7 +23,7 @@
 
                     {{-- Agar 1 se zyada images hain tabhi left thumbnails show honge --}}
                     @if($productImages->count() > 1)
-                        <div class="thumbs thumbs-side" aria-label="Choose product image">
+                        <div class="thumbs thumbs-side compact-thumbs" aria-label="Choose product image">
                             @foreach($productImages as $image)
                                 @if($loop->index < 5)
                                     <button

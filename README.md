@@ -23,7 +23,7 @@ Laravel 11/12 + MySQL storefront and admin panel for a fabric e-commerce store.
 	CREATE DATABASE suratnx CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 	```
 
-3. This workspace has a local `.env` already. If it is missing (for example, after extracting a clean copy), create it and edit the database credentials and set a unique `ADMIN_PASSWORD` of at least 16 characters:
+3. This workspace has a local `.env` already. If it is missing (for example, after extracting a clean copy), create it and edit the database credentials:
 
 	```powershell
 	Copy-Item .env.example .env

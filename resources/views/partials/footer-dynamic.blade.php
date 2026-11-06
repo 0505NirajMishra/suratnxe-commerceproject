@@ -1,12 +1,3 @@
-@php
-    $socialLinks = [
-        'Instagram' => \App\Models\Setting::get('social_instagram'),
-        'Facebook' => \App\Models\Setting::get('social_facebook'),
-        'X' => \App\Models\Setting::get('social_x'),
-        'LinkedIn' => \App\Models\Setting::get('social_linkedin'),
-        'YouTube' => \App\Models\Setting::get('social_youtube'),
-    ];
-@endphp
 <footer class="ftr">
     <div class="wrap ftr-grid">
         <div class="ftr-brand">
@@ -15,12 +6,8 @@
                 <span class="logo-t"><b>{{ \App\Models\Setting::get('name') }}</b><small>{{ \App\Models\Setting::get('tagline') }}</small></span>
             </a>
             <p>{{ \App\Models\Setting::get('footer_description') }}</p>
-            <div class="social" aria-label="Social media">
-                @foreach($socialLinks as $network => $url)
-                    @if($url)
-                        <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">{{ $network }}</a>
-                    @endif
-                @endforeach
+            <div class="social social-links social-links--footer" aria-label="Social media">
+                @include('partials.social-links', ['variant' => 'footer'])
             </div>
             @if(\App\Models\Setting::get('youtube_video'))
                 <a class="footer-video-link" href="{{ \App\Models\Setting::get('youtube_video') }}" target="_blank" rel="noopener noreferrer">Watch our latest video</a>

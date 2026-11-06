@@ -33,7 +33,22 @@
                                     <p>{{ collect($order->address ?? [])->only(['line1', 'line2', 'landmark', 'city', 'state', 'pin'])->filter()->implode(', ') ?: 'No address recorded' }}</p>
                                     <strong>Items</strong>
                                     @foreach($order->items as $item)
-                                        <p>{{ $item->name }} ({{ $item->sku }}) × {{ $item->qty }} — ₹{{ number_format($item->price, 2) }}</p>
+                                        @php
+                                            $itemImage = $item->image;
+                                            if (!$itemImage || !\Illuminate\Support\Facades\Storage::disk('public')->exists($itemImage)) {
+                                                $itemImage = $item->product?->images->first()?->path;
+                                            }
+                                        @endphp
+                                        <div class="admin-order-item">
+                                            <span class="admin-order-item-image">
+                                                @if($itemImage)
+                                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($itemImage) }}" alt="{{ $item->name }}" loading="lazy"
+                                                         onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
+                                                @endif
+                                                <span class="admin-order-item-placeholder" @if($itemImage) hidden @endif aria-hidden="true">No image</span>
+                                            </span>
+                                            <span>{{ $item->name }} ({{ $item->sku }}) × {{ $item->qty }} — ₹{{ number_format($item->price, 2) }}</span>
+                                        </div>
                                     @endforeach
                                     <strong>Status timeline</strong>
                                     @forelse($order->timeline as $event)
@@ -44,7 +59,28 @@
                                 </div>
                             </details>
                         </td>
-                        <td>@foreach($order->items as $item)<div>{{ $item->name }} × {{ $item->qty }}</div>@endforeach</td>
+                        <td>
+                            <div class="admin-order-items">
+                                @foreach($order->items as $item)
+                                    @php
+                                        $itemImage = $item->image;
+                                        if (!$itemImage || !\Illuminate\Support\Facades\Storage::disk('public')->exists($itemImage)) {
+                                            $itemImage = $item->product?->images->first()?->path;
+                                        }
+                                    @endphp
+                                    <div class="admin-order-item">
+                                        <span class="admin-order-item-image">
+                                            @if($itemImage)
+                                                <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($itemImage) }}" alt="{{ $item->name }}" loading="lazy"
+                                                     onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
+                                            @endif
+                                            <span class="admin-order-item-placeholder" @if($itemImage) hidden @endif aria-hidden="true">No image</span>
+                                        </span>
+                                        <span>{{ $item->name }} × {{ $item->qty }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </td>
                         <td>₹{{ number_format($order->total, 2) }}<small class="sub">{{ $order->payment_method }} / {{ $order->payment_status }}</small></td>
                         <td>
                             <form method="post" action="{{ route('admin.orders.update', $order) }}">

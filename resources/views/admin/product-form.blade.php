@@ -147,9 +147,14 @@
                         type="file"
                         name="images[]"
                         multiple
-                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                        data-admin-image-input
+                        data-image-limit="10"
+                        data-image-input-error-target="fabric-images-error"
+                        accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.ico,.avif"
                         @required(!$product->exists)
                     >
+                    <small id="fabric-images-error" class="text-danger" data-image-input-error></small>
+                    <div class="admin-image-previews admin-product-image-grid" data-admin-image-previews aria-live="polite"></div>
 
                     @error('images')
                         <small class="text-danger">{{ $message }}</small>
@@ -169,7 +174,7 @@
                         @if ($currentImages->isNotEmpty())
                             <p style="margin-top:18px;font-weight:600">Current images:</p>
 
-                            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px;margin-top:10px">
+                            <div class="admin-product-image-grid" style="margin-top:10px">
                                 @foreach ($currentImages as $image)
                                     @php
                                         // Normalize paths saved in the database, including Windows paths.
@@ -194,12 +199,12 @@
                                         $imageUrl = url('/storage/' . $imagePath);
                                     @endphp
 
-                                    <div style="border:1px solid #ddd;border-radius:8px;padding:7px;min-width:0">
+                                    <div class="admin-image-card" data-admin-existing-image>
                                         <img
                                             src="{{ $imageUrl }}"
                                             alt="{{ $product->name }} fabric image"
                                             loading="lazy"
-                                            style="display:block;width:100%;aspect-ratio:1/1;object-fit:contain;background:#f7f7f7;border-radius:5px"
+                                            class="admin-image-thumbnail"
                                             onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
                                         >
 
@@ -212,6 +217,9 @@
                                         <small style="display:block;margin-top:6px;overflow-wrap:anywhere;color:#777">
                                             {{ basename($imagePath) }}
                                         </small>
+                                        <input type="checkbox" name="remove_images[]" value="{{ $image->id }}" class="admin-image-removal-input" data-admin-image-removal>
+                                        <button class="admin-image-remove" type="button" data-toggle-image-removal aria-pressed="false" aria-label="Remove this image" title="Remove this image">×</button>
+                                        <span class="admin-image-removal-note">Will be removed on save</span>
                                     </div>
                                 @endforeach
                             </div>

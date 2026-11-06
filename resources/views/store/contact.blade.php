@@ -36,12 +36,8 @@
                 @endif
                 <div class="contact-social" aria-label="Follow Surat NX">
                     <h3>Follow Surat NX</h3>
-                    <div>
-                        <a href="{{ \App\Models\Setting::get('social_instagram') }}" target="_blank" rel="noopener noreferrer">Instagram</a>
-                        <a href="{{ \App\Models\Setting::get('social_facebook') }}" target="_blank" rel="noopener noreferrer">Facebook</a>
-                        <a href="{{ \App\Models\Setting::get('social_x') }}" target="_blank" rel="noopener noreferrer">X</a>
-                        <a href="{{ \App\Models\Setting::get('social_linkedin') }}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                        <a href="{{ \App\Models\Setting::get('social_youtube') }}" target="_blank" rel="noopener noreferrer">YouTube</a>
+                    <div class="social-links social-links--light">
+                        @include('partials.social-links', ['variant' => 'light'])
                     </div>
                 </div>
                 <div style="margin-top:24px">

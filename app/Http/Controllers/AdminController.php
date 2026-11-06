@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-use App\Jobs\ProcessProductImages;
-use App\Models\{Category,Coupon,Enquiry,Order,Product,ProductImage,Setting,User}; use Illuminate\Http\Request; use Illuminate\Support\Facades\Hash; use Illuminate\Support\Str; use Illuminate\Support\Facades\Storage; use Illuminate\Validation\Rule;
+use App\Models\{Category,Coupon,Enquiry,Order,Product,Setting,User}; use Illuminate\Http\Request; use Illuminate\Support\Facades\Hash; use Illuminate\Support\Str; use Illuminate\Support\Facades\Storage; use Illuminate\Validation\Rule;
 class AdminController extends Controller {
  public function login()
  {
@@ -28,7 +27,7 @@ class AdminController extends Controller {
   return redirect()->route('admin.dashboard');
  }
  public function activity(){return response()->noContent();}
- public function dashboard(){return view('admin.dashboard',['stats'=>['products'=>Product::count(),'orders'=>Order::count(),'customers'=>User::where('role','customer')->count(),'revenue'=>Order::where('payment_status','Paid')->sum('total')],'orders'=>Order::latest()->take(8)->get()]);}
+ public function dashboard(){return view('admin.dashboard',['stats'=>['products'=>Product::count(),'orders'=>Order::count(),'customers'=>User::where('role','customer')->count(),'revenue'=>Order::where('payment_status','Paid')->sum('total')],'orders'=>Order::latest()->paginate(5,['*'],'orders_page')]);}
  public function products(Request $r){$products=Product::with('category')->when($r->q,fn($q)=>$q->where('name','like','%'.$r->q.'%')->orWhere('sku','like','%'.$r->q.'%'))->latest()->paginate(15)->withQueryString();return view('admin.products',compact('products'));}
  public function productCreate(){return view('admin.product-form',['product'=>new Product,'categories'=>Category::orderBy('name')->get(),'coupons'=>Coupon::orderBy('code')->get()]);} public function productEdit(Product $product){$product->load('images');return view('admin.product-form',['product'=>$product,'categories'=>Category::orderBy('name')->get(),'coupons'=>Coupon::orderBy('code')->get()]);}
 
@@ -52,14 +51,24 @@ class AdminController extends Controller {
    'status'=>'required|in:active,inactive',
    'tags'=>'nullable|string|max:255',
    'images'=>[$product->exists?'nullable':'required','array','min:'.($product->exists?0:1),'max:10'],
-   // Avoid Laravel's full image-content rule in the request process. The queued job
-   // performs a lightweight readability check after the upload has been stored.
-   'images.*'=>['bail','required','file','mimes:jpg,jpeg,png,webp'],
+   'remove_images'=>[$product->exists?'nullable':'prohibited','array'],
+   'remove_images.*'=>['integer','distinct',Rule::exists('product_images','id')->where('product_id',$product->id)],
+   'images.*'=>['bail','required','file','mimes:jpg,jpeg,png,webp,gif,svg,ico,avif','extensions:jpg,jpeg,png,webp,gif,svg,ico,avif'],
   ]);
   $images=$r->file('images',[]);
+  $removeImageIds=$data['remove_images']??[];
   unset($data['images']);
+  unset($data['remove_images']);
+  $remainingImageCount=$product->exists
+   ? $product->images()->whereNotIn('id',$removeImageIds)->count()
+   : 0;
+  if($remainingImageCount+count($images)>10){
+   return back()->withErrors(['images'=>'A fabric can have up to 10 images. Remove an existing image before adding more.'])->withInput($r->except('images'));
+  }
   $data['status']=$data['status']==='inactive'?'draft':'active';
-  $data['slug']=Str::slug($data['name']).'-'.Str::lower(Str::random(5));
+  if(!$product->exists){
+   $data['slug']=Str::slug($data['name']).'-'.Str::lower(Str::random(5));
+  }
   $data['tags']=array_values(array_filter(array_map('trim',explode(',', $data['tags']??''))));
 
   $storedImages=[];
@@ -76,27 +85,33 @@ class AdminController extends Controller {
    $storedImages[]=$path;
   }
 
+  $removedImages=$product->exists
+   ? $product->images()->whereIn('id',$removeImageIds)->get()
+   : collect();
   try {
-   \Illuminate\Support\Facades\DB::transaction(function () use ($product, $data, $storedImages) {
+   \Illuminate\Support\Facades\DB::transaction(function () use ($product, $data, $storedImages, $removedImages) {
     $product->fill($data);
-    if (count($storedImages)) {
-     $product->image_processing_status='pending';
-    }
+    $product->image_processing_status='completed';
     $product->save();
+    if($removedImages->isNotEmpty()){
+     $product->images()->whereIn('id',$removedImages->modelKeys())->delete();
+    }
+    $sortOrder=(int)($product->images()->max('sort_order')??-1);
+    foreach($storedImages as $path){
+     $product->images()->create([
+      'path'=>$path,
+      'sort_order'=>++$sortOrder,
+     ]);
+    }
    });
   } catch (\Throwable $exception) {
    Storage::disk('public')->delete($storedImages);
    throw $exception;
   }
-
-  if (count($storedImages)) {
-   try {
-    ProcessProductImages::dispatch($product->id, $storedImages)->afterCommit();
-   } catch (\Throwable $exception) {
-    report($exception);
-    $product->forceFill(['image_processing_status'=>'failed'])->save();
-    return redirect()->route('admin.products.edit', $product)
-     ->with('error','Fabric details were saved, but image processing could not be queued. Check the queue/database configuration and try again.');
+  if($removedImages->isNotEmpty()){
+   $removedPaths=$removedImages->pluck('path')->all();
+   if(!Storage::disk('public')->delete($removedPaths)){
+    report(new \RuntimeException('One or more removed fabric images could not be deleted from storage.'));
    }
   }
 
@@ -114,7 +129,7 @@ class AdminController extends Controller {
    'name'=>'required|string|max:120',
    'code'=>['required','string','max:10',Rule::unique('categories','code')],
    'description'=>'nullable|string|max:1000',
-   'image'=>'required|image|mimes:jpg,jpeg,png,webp',
+   'image'=>'required|mimes:jpg,jpeg,png,webp,gif,svg,ico,avif|extensions:jpg,jpeg,png,webp,gif,svg,ico,avif',
    'is_active'=>'nullable|boolean',
   ]);
   $path=$r->file('image')->store('categories','public');
@@ -132,23 +147,29 @@ class AdminController extends Controller {
    'name'=>'required|string|max:120',
    'code'=>['required','string','max:10',Rule::unique('categories','code')->ignore($category->id)],
    'description'=>'nullable|string|max:1000',
-   'image'=>'nullable|image|mimes:jpg,jpeg,png,webp',
+   'image'=>'nullable|mimes:jpg,jpeg,png,webp,gif,svg,ico,avif|extensions:jpg,jpeg,png,webp,gif,svg,ico,avif',
+   'remove_image'=>'nullable|boolean',
    'sort_order'=>'required|integer|min:0|max:65535',
    'is_active'=>'nullable|boolean',
   ]);
+  $removeImage=$r->boolean('remove_image');
+  unset($data['remove_image']);
+  $oldImage=$category->image;
   if($image=$r->file('image')){
    $path=$image->store('categories','public');
    if(!$path) return back()->withErrors(['image'=>'Unable to save this category image.'])->withInput();
-   if($category->image) Storage::disk('public')->delete($category->image);
    $data['image']=$path;
+  }elseif($removeImage){
+   $data['image']=null;
   }
   $data['slug']=Str::slug($data['name']).'-'.Str::lower(Str::random(5));
   $data['is_active']=$r->boolean('is_active');
   $category->update($data);
+  if($oldImage && ($image || $removeImage)) Storage::disk('public')->delete($oldImage);
   return back()->with('success','Category updated.');
  }
  public function categoryDelete(Category $category){if($category->image) Storage::disk('public')->delete($category->image);$category->delete();return back()->with('success','Category deleted with its products.');}
- public function orders(Request $r){$orders=$this->orderQuery($r)->with(['items','timeline'])->paginate(15)->withQueryString();return view('admin.orders',compact('orders'));}
+ public function orders(Request $r){$orders=$this->orderQuery($r)->with(['items.product.images','timeline'])->paginate(15)->withQueryString();return view('admin.orders',compact('orders'));}
  public function ordersExport(Request $r)
  {
   $orders=$this->orderQuery($r)->with('items')->get();
@@ -166,7 +187,7 @@ class AdminController extends Controller {
   },'surat-nx-orders-'.now()->format('Ymd-His').'.csv',['Content-Type'=>'text/csv; charset=UTF-8']);
  }
  public function orderUpdate(Request $r,Order $order){$d=$r->validate(['status'=>['required',Rule::in(Order::STATUSES)],'courier'=>'nullable|string|max:120','tracking_no'=>'nullable|string|max:120','payment_status'=>'required|in:Pending,Paid,COD,Failed,Refunded']);$order->update(collect($d)->except('status')->all());app(\App\Services\OrderService::class)->setStatus($order,$d['status']);return back()->with('success','Order updated.');}
- public function customers(Request $r){$customers=User::where('role','customer')->withCount('orders')->when($r->q,fn($q)=>$q->where(fn($search)=>$search->where('name','like','%'.$r->q.'%')->orWhere('email','like','%'.$r->q.'%')))->latest()->paginate(20)->withQueryString();return view('admin.customers',compact('customers'));}
+ public function customers(Request $r){$customers=User::where('role','customer')->withCount('orders')->when($r->q,fn($q)=>$q->where(fn($search)=>$search->where('name','like','%'.$r->q.'%')->orWhere('email','like','%'.$r->q.'%')))->latest()->paginate(10,['*'],'customers_page')->withQueryString();return view('admin.customers',compact('customers'));}
  public function customer(User $customer){abort_unless($customer->role==='customer',404);$customer->load(['addresses','orders.items','orders.timeline']);return view('admin.customer',compact('customer'));}
  private function orderQuery(Request $r){return Order::query()->when($r->filled('status'),fn($q)=>$q->where('status',(string)$r->input('status')))->when($r->filled('q'),fn($q)=>$q->where(fn($x)=>$x->where('order_no','like','%'.$r->q.'%')->orWhere('email','like','%'.$r->q.'%')->orWhere('name','like','%'.$r->q.'%')))->latest();}
  public function coupons(){return view('admin.coupons',['coupons'=>Coupon::latest()->get()]);} public function couponSave(Request $r){$d=$r->validate(['code'=>'required|string|max:50|unique:coupons,code','type'=>'required|in:percent,flat','value'=>'required|numeric|min:0','min_order'=>'nullable|numeric|min:0','max_discount'=>'nullable|numeric|min:0','description'=>'nullable|string|max:190']);$d['code']=strtoupper($d['code']);Coupon::create($d);return back()->with('success','Coupon created.');} public function couponDelete(Coupon $coupon){$coupon->delete();return back()->with('success','Coupon deleted.');}
@@ -213,12 +234,15 @@ class AdminController extends Controller {
    'name'=>'required|string|max:120',
    'email'=>['required','email','max:190',Rule::unique('users','email')->ignore($user->id)],
    'phone'=>'nullable|string|max:20',
-   'profile_photo'=>'nullable|image|mimes:jpg,jpeg,png,webp',
+   'profile_photo'=>'nullable|mimes:jpg,jpeg,png,webp,gif,svg,ico,avif|extensions:jpg,jpeg,png,webp,gif,svg,ico,avif',
+   'remove_profile_photo'=>'nullable|boolean',
    'password'=>'nullable|confirmed|min:8',
    'current_password'=>'required_with:password|string',
   ]);
   $photo=$r->file('profile_photo');
+  $removePhoto=$r->boolean('remove_profile_photo');
   unset($data['profile_photo']);
+  unset($data['remove_profile_photo']);
   if(empty($data['password'])) unset($data['password']);
   elseif(!Hash::check($data['current_password'],$user->password)) return back()->withErrors(['current_password'=>'Current password is incorrect.'])->withInput();
   unset($data['current_password']);
@@ -227,6 +251,9 @@ class AdminController extends Controller {
    if(!$path) return back()->withErrors(['profile_photo'=>'Unable to save the profile picture.'])->withInput();
    if($user->profile_photo_path) Storage::disk('public')->delete($user->profile_photo_path);
    $data['profile_photo_path']=$path;
+  }elseif($removePhoto){
+   if($user->profile_photo_path) Storage::disk('public')->delete($user->profile_photo_path);
+   $data['profile_photo_path']=null;
   }
   $user->update($data);
   return back()->with('success','Admin profile updated.');

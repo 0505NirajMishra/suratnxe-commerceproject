@@ -1,6 +1,164 @@
 /* ==========================================================
    SURAT NX — admin panel styles (extends style.css)
    ========================================================== */
+.admin-image-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px
+}
+
+.admin-product-image-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start
+}
+
+.admin-product-image-grid .admin-image-card {
+  width: auto;
+  margin: 0
+}
+
+.admin-image-card {
+  position: relative;
+  width: 140px;
+  min-width: 0;
+  margin: 12px;
+  padding: 7px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff
+}
+
+@media (max-width: 900px) {
+  .admin-product-image-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-product-image-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  }
+}
+
+.admin-image-thumbnail {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #f7f7f7;
+  border-radius: 5px;
+  transition: opacity .15s
+}
+
+.admin-image-filename {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+  color: #777
+}
+
+.admin-image-remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: 1px solid #e8c9c5;
+  border-radius: 50%;
+  background: #fff;
+  color: #b42318;
+  font-size: 0;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(23, 20, 15, .16);
+  transition: background .15s, color .15s, border-color .15s, transform .15s
+}
+
+.admin-image-remove:hover,
+.admin-image-remove:focus-visible {
+  border-color: #b42318;
+  background: #b42318;
+  color: #fff;
+  transform: scale(1.06)
+}
+
+.admin-image-remove:focus-visible {
+  outline: 2px solid #17140f;
+  outline-offset: 2px
+}
+
+.admin-image-remove::before,
+.admin-image-remove::after {
+  position: absolute;
+  width: 11px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  content: "";
+  transform: rotate(45deg)
+}
+
+.admin-image-remove::after {
+  transform: rotate(-45deg)
+}
+
+.admin-image-removal-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none
+}
+
+.admin-image-removal-note {
+  display: none;
+  margin-top: 5px;
+  color: #b42318;
+  font-size: 12px
+}
+
+.admin-image-card.is-removing .admin-image-thumbnail {
+  opacity: .35
+}
+
+.admin-image-card.is-removing .admin-image-removal-note {
+  display: block
+}
+
+.category-admin-image-card {
+  width: 68px;
+  height: 68px;
+  flex: 0 0 68px;
+  padding: 0
+}
+
+.category-admin-image-card .admin-image-thumbnail {
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover
+}
+
+.admin-profile-image-card {
+  display: inline-block;
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  padding: 0;
+  border-radius: 50%
+}
+
+.admin-profile-image-card .admin-image-thumbnail {
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover;
+  border-radius: 50%
+}
 body.adm-body {
   display: block;
   background: var(--cream)
@@ -459,6 +617,31 @@ body.adm-body {
   max-width: 16px
 }
 
+.admin-table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line)
+}
+
+.admin-pagination-summary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px
+}
+
+.admin-pagination-summary strong {
+  color: var(--ink);
+  font-weight: 600
+}
+
+.admin-table-pagination nav[role="navigation"] {
+  margin-top: 0 !important
+}
+
 .order-details {
   margin-top: 9px;
   font-size: 13px
@@ -480,6 +663,44 @@ body.adm-body {
 .order-details-panel strong {
   display: block;
   margin-top: 8px
+}
+
+.admin-order-items {
+  display: grid;
+  gap: 10px
+}
+
+.admin-order-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 180px
+}
+
+.admin-order-item-image {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #faf6ee
+}
+
+.admin-order-item-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover
+}
+
+.admin-order-item-placeholder {
+  padding: 3px;
+  color: var(--muted);
+  font-size: 9px;
+  text-align: center
 }
 
 .category-edit {
