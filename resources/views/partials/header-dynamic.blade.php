@@ -24,7 +24,7 @@
             {{ \App\Models\Setting::get('email') }}
         </a>
         <span class="grow"></span>
-        <a href="{{ route('track') }}">Track Order shdvbdsbvsdbk</a>
+        <a href="{{ route('track') }}">Track Order</a>
         <a href="{{ route('contact') }}">Help Center</a>
         @if($storeCustomer)
             <a href="{{ route('account') }}">Hi, {{ Str::before(auth()->user()->name, ' ') }}</a>
@@ -56,7 +56,7 @@
                     @endforeach
                 </div>
             </div>
-            <a href="{{ route('about') }}">About</a>
+            <a href="{{ route('about') }}">About Us</a>
             <a href="{{ route('contact') }}">Contact</a>
         </nav>
         <form class="hsearch" action="{{ route('shop') }}">
